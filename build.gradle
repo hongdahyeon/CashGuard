@@ -7,6 +7,11 @@ plugins {
 group = 'com.hong'
 version = '0.0.1-SNAPSHOT'
 
+// 환경별 리소스 디렉토리를 다르게 설정
+ext.profile = (!project.hasProperty('profile') || !profile) ? 'local' : profile										// Active Profiles 설정
+sourceSets.main.resources.srcDirs = [ "src/main/resources", "src/main/resources-env/$profile", "src/main/java" ]	// 리소스 디렉토리 설정 : 기본 리소스, 환경별 리소스, 자바 리소스
+sourceSets.main.resources.includes = [ "**/*.*" ]																	// 모든 파일을 리소스로 포함한다
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
@@ -26,20 +31,35 @@ repositories {
 dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-batch'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
-	implementation 'org.springframework.session:spring-session-core'
+
+	// security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-	implementation 'com.mysql:mysql-connector-j'
+	implementation 'org.springframework.session:spring-session-core'
+
+	// mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+	// db
+	implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.4'
+	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client'
+
+	// log console
+	implementation 'org.jodd:jodd-core:5.3.0'
+
+	// tus
+	implementation 'me.desair.tus:tus-java-server:1.0.0-3.0'
+
+	// aop
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
 
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 
+	// test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.4'
 	testImplementation 'org.springframework.batch:spring-batch-test'
