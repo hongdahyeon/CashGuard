@@ -17,7 +17,8 @@ import java.util.concurrent.TimeUnit;
  * fileName       : WebConfig
  * author         : work
  * date           : 2025-03-27
- * description    :
+ * description    : Spring 설정 파일
+ *                  > 빈 등록 및 정적 리소스에 대한 설정
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
@@ -37,6 +38,17 @@ public class WebConfig implements WebMvcConfigurer {
         return new UserInterceptor();
     }
 
+    /**
+     * @method      addResourceHandlers
+     * @author      work
+     * @date        2025-03-28
+     * @deacription 정적 리소스에 대한 설정
+     *              * { addResourceHandler } : "/asstes/**"로 시작하는 요청을 처리하는 핸들러 등록
+     *              * { addResourceLocations } : "/src/main/resources/static/assets/**" 아래의 파일을 정적 리소스로 제공
+     *              * { setCacheControl } : 캐시 유지 : 1년(365일)
+     *              * { resourceChain } : 리소스 최적화
+     *              * { addResolver } : 파일 변경 감지를 위한 버전 관리 (파일이 변경되면 브라우저가 새롭게 파일을 가져오도록 설정)
+    **/
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         /*registry
@@ -44,16 +56,22 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:///" + ckImagePath, "file:///" + summerNoteImagePath);*/
 
         registry
-                .addResourceHandler("/assets/**")
-                .addResourceLocations("classpath:/static/assets/")
-                .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
-                .resourceChain(true)
-                .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
+            .addResourceHandler("/assets/**")
+            .addResourceLocations("classpath:/static/assets/")
+            .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS))
+            .resourceChain(true) //
+            .addResolver(new VersionResourceResolver().addContentVersionStrategy("/**"));
     }
 
+    /**
+     * @method      addInterceptors
+     * @author      work
+     * @date        2025-03-28
+     * @deacription 인터셉터 설정 -> "정적 파일"과 "/error"경로에 대해서는 제외
+    **/
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(loggingInterceptor()).excludePathPatterns("/assets/**", "/error");
-        registry.addInterceptor(userInterceptor()).excludePathPatterns("/assets/**", "/error");
+        registry.addInterceptor(loggingInterceptor()).excludePathPatterns("/assets/**/*");
+        registry.addInterceptor(userInterceptor()).excludePathPatterns("/assets/**/*", "/login", "/loginProc", "/logout", "/error/**/*");
     }
 }

@@ -27,6 +27,12 @@ import java.util.Map;
 @RequestMapping("")
 @RequiredArgsConstructor
 public class HomeController {
+
+    @GetMapping("/login")
+    public String login() {
+        return "/login";
+    }
+
     @GetMapping("/")
     public String home() {
         return "index";
