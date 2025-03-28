@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.user.domain.CgUserMapper">
+
+    <select id="findUserByUserId" parameterType="String" resultType="CgUserView">
+        /* cgUser.findUserByUserId */
+        SELECT UID
+              ,USER_ID
+              ,PASSWORD
+              ,USER_NM
+              ,USER_TEL
+              ,USER_EMAIL
+              ,LAST_CONN_DT
+              ,LAST_PASSWD_CHNG_DT
+              ,PROFILE_UID
+              ,IS_ENABLE
+              ,PWD_FAIL_CNT
+              ,IS_LOCKED
+              ,ROLE
+          FROM CASH_GUARD.CG_USER
+         WHERE USER_ID = #{userId}
+    </select>
+
+    <update id="updateLastLoginDtAndPwdFailCnt" parameterType="String">
+        /* cgUser.updateLastLoginDtAndPwdFailCnt */
+        UPDATE CASH_GUARD.CG_USER
+           SET LAST_CONN_DT = NOW()
+              ,PWD_FAIL_CNT = 0
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updatePwdFailCnt" parameterType="map">
+        /* cgUser.updatePwdFailCnt */
+        UPDATE CASH_GUARD.CG_USER
+           SET PWD_FAIL_CNT = #{pwdFailCnt}
+           <if test="pwdFailCnt != null and pwdFailCnt == 5">
+              ,IS_LOCKED = 'Y'
+           </if>
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <insert id="insert" parameterType="CgUser">
+        /* cgUser.insert */
+        INSERT INTO CASH_GUARD.CG_USER (
+             USER_ID
+            ,PASSWORD
+            ,USER_NM
+            ,USER_TEL
+            ,USER_EMAIL
+            ,LAST_CONN_DT
+            ,LAST_PASSWD_CHNG_DT
+            ,IS_ENABLE
+            ,PWD_FAIL_CNT
+            ,IS_LOCKED
+            ,ROLE
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{userId}
+            ,#{password}
+            ,#{userNm}
+            ,#{userTel}
+            ,#{userEmail}
+            ,NOW()
+            ,(NOW() + INTERVAL '90' DAY)
+            ,'Y'
+            ,0
+            ,'N'
+            ,#{role}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+</mapper>

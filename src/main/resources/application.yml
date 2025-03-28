@@ -1,10 +1,23 @@
 spring:
+  profiles:
+    active: local
   application:
-    name: CashGaurd
+    name: CashGuard
+  thymeleaf:
+    prefix: classpath:templates/
+    suffix: .html
+    check-template-location: true
+    mode: HTML
+    cache: false
 
 server:
-  port: 8080
+  port: 8084
 
 logging:
   level:
     root: info
+
+hong:
+  mybatis-setting:
+    mapper-locations: file:src/main/java/hong/CashGuard/**/*.xml
+    type-aliases-package: hong.CashGuard.**
