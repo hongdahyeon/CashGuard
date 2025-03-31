@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.code.domain.CgCodeMapper">
+
+    <insert id="insert" parameterType="CgCode">
+        /* cgCode.insert */
+        INSERT INTO CASH_GUARD.CG_CODE (
+            UPPER_CODE
+           ,CODE
+           ,CODE_NM
+           ,USE_AT
+           ,REG_UID
+           ,REG_DT
+           ,UPDT_UID
+           ,UPDT_DT
+        ) VALUES (
+            #{upperCode}
+           ,#{code}
+           ,#{codeNm}
+           ,#{useAt}
+           ,#{regUid}
+           ,NOW()
+           ,#{updtUid}
+           ,NOW()
+        )
+    </insert>
+
+    <select id="isExistCode" parameterType="String">
+        /* cgCode.isExistCode */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_CODE
+         WHERE CODE = #{code}
+           AND USE_AT = 'Y'
+    </select>
+
+    <select id="getAllChildren" parameterType="String" resultType="CgCodeList">
+        /* cgCode.getAllChildren */
+        SELECT CGCODE.UID
+              ,CGCODE.UPPER_CODE
+              ,CGCODE.CODE
+              ,CGCODE.CODE_NM
+              ,CGCODE.USE_AT
+              ,CGCODE.REG_UID
+              ,CGCODE.REG_DT
+              ,CG_REG.USER_NM AS REG_NM
+              ,CGCODE.UPDT_UID
+              ,CGCODE.UPDT_DT
+              ,CG_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_CODE AS CGCODE
+          LEFT JOIN CASH_GUARD.CG_USER CG_REG ON CG_REG.UID = CGCODE.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CG_UPDT ON CG_UPDT.UID = CGCODE.REG_UID
+         WHERE CGCODE.UPPER_CODE = #{upperCode}
+           AND CGCODE.USE_AT= 'Y'
+    </select>
+</mapper>
