@@ -1,7 +1,7 @@
 package hong.CashGuard.domain.user.domain;
 
 import hong.CashGuard.domain.user.dto.response.CgUserView;
-import hong.CashGuard.global.core.BaseMapper;
+import hong.CashGuard.global.bean.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Map;

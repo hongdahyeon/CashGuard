@@ -4,7 +4,10 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
@@ -22,12 +25,19 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-28        work       최초 생성
+ * 2024-03-31        home       valid, param 관련 error handle 추가
  */
 
 
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
 
+    /**
+     * @method      handleDatabaseError
+     * @author      home
+     * @date        2025-03-31
+     * @deacription DB 에러
+    **/
     @ExceptionHandler(DataAccessException.class)
     public ResponseEntity handleDatabaseError(DataAccessException ex) {
         Map<String, Object> response = new HashMap<>();
@@ -50,6 +60,38 @@ public class GlobalRestExceptionHandler {
         return ResponseEntity
                         .status(HttpStatus.INTERNAL_SERVER_ERROR)
                         .body(response);
+    }
+
+    /**
+     * @method      handleConstraintViolationException
+     * @author      home
+     * @date        2025-03-31
+     * @deacription @RequestParam, @PathVariable 유효성 검사 실패
+    **/
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(ConstraintViolationException.class)
+    public Map<String, String> handleConstraintViolationException(ConstraintViolationException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getConstraintViolations().forEach(violation ->
+                errors.put(violation.getPropertyPath().toString(), violation.getMessage())
+        );
+        return errors;
+    }
+
+    /**
+     * @method      handleValidationExceptions
+     * @author      home
+     * @date        2025-03-31
+     * @deacription @Valid, @Validated 에러 
+    **/
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.put(error.getField(), error.getDefaultMessage());
+        }
+        return errors;
     }
 
 }

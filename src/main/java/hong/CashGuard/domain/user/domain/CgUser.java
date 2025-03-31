@@ -1,7 +1,7 @@
 package hong.CashGuard.domain.user.domain;
 
 import hong.CashGuard.domain.user.dto.request.CgUserSave;
-import hong.CashGuard.global.core.AuditBean;
+import hong.CashGuard.global.bean.AuditBean;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

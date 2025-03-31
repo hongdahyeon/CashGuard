@@ -32,10 +32,8 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
-
         CgUserView user = userService.getUserByUserId(userId);
         CgSessionUser cgSessionUser = new CgSessionUser(user); // cg-user to session-user
-
         if(user != null) {
             this.customUser(cgSessionUser);
             return new PrincipalDetails(cgSessionUser);

@@ -23,7 +23,6 @@ public class Paths {
              new AntPathRequestMatcher("/login")
             ,new AntPathRequestMatcher("/csrf")
             ,new AntPathRequestMatcher("/assets/**")
-            ,new AntPathRequestMatcher("/cguard/api/user/**")
             ,new AntPathRequestMatcher("/login/force.json")
     };
 

@@ -1,14 +1,12 @@
 package hong.CashGuard.global.aop;
 
 import hong.CashGuard.global.auth.PrincipalDetails;
-import hong.CashGuard.global.core.AuditBean;
+import hong.CashGuard.global.bean.AuditBean;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -34,8 +32,8 @@ public class MyBatisInterceptorAspect {
     @Around(
             "execution(* hong.CashGuard..domain.mapper.*.insert*(..)) || " +
                     "execution(* hong.CashGuard..domain.mapper.*.update*(..)) || " +
-                    "execution(* hong.CashGuard.global.core.BaseMapper.insert*(..)) || " +
-                    "execution(* hong.CashGuard.global.core.BaseMapper.update*(..))"
+                    "execution(* hong.CashGuard.global.bean.BaseMapper.insert*(..)) || " +
+                    "execution(* hong.CashGuard.global.bean.BaseMapper.update*(..))"
     )
     public Object beforeInsertOrUpdate(ProceedingJoinPoint joinPoint) throws Throwable {
 

@@ -1,8 +1,5 @@
 package hong.CashGuard.global.config;
 
-import hong.CashGuard.domain.user.service.CgUserService;
-import hong.CashGuard.global.auth.PrincipalDetails;
-import hong.CashGuard.global.auth.PrincipalDetailsService;
 import hong.CashGuard.global.handler.CustomLoginFailureHandler;
 import hong.CashGuard.global.handler.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +12,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter;
 import org.springframework.web.cors.CorsConfiguration;
 
-import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -33,6 +28,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-03-31        home       전체 접근 허가 URL (사용자 추가) 따로 빼기
  */
 
 @Configuration
@@ -58,6 +54,7 @@ public class SecurityConfig {
     **/
     private void configureAuthorization(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
         auth.requestMatchers(Paths.BEFORE_LOGIN).permitAll() // 로그인 전 접근 가능
+            .requestMatchers(HttpMethod.POST, "/cguard/api/user").permitAll()
             .requestMatchers(Paths.ROLE_SUPER).hasAuthority("ROLE_SUPER") // {ROLE_SUPER} 권한만 접근 가능
             .requestMatchers(Paths.ROLE_MANAGER).hasAnyAuthority("ROLE_SUPER", "ROLE_MANAGER") // {ROLE_SUPER}, {ROLE_MANAGER} 권한만 접근 가능
             .requestMatchers(Paths.AFTER_LOGIN).authenticated() // 로그인 후 접근 가능
@@ -74,7 +71,7 @@ public class SecurityConfig {
     **/
     private void configureCsrf(CsrfConfigurer<HttpSecurity> csrfConfigurer) {
         csrfConfigurer.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-//        csrfConfigurer.disable();
+        //csrfConfigurer.disable();
     }
 
     /**
