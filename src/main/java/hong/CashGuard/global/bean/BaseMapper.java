@@ -13,9 +13,11 @@ import java.util.List;
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
  * 2025-03-31        home       * 상위 패키지명 변경 (core->bean)
- *                              * list, count 추가
+ *                              * list, count, page 추가
  */
 public interface BaseMapper<T> {
+
+    <B, R> List<R> page(B param);
 
     <B, R> List<R> list(B param);
 

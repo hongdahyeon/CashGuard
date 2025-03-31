@@ -2,8 +2,11 @@ package hong.CashGuard.domain.code.service;
 
 import hong.CashGuard.domain.code.domain.CgCode;
 import hong.CashGuard.domain.code.domain.CgCodeMapper;
+import hong.CashGuard.domain.code.dto.request.CgCodeParam;
 import hong.CashGuard.domain.code.dto.request.CgCodeSave;
 import hong.CashGuard.domain.code.dto.response.CgCodeList;
+import hong.CashGuard.global.bean.Page;
+import hong.CashGuard.global.bean.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,5 +65,19 @@ public class CgCodeService {
     @Transactional(readOnly = true)
     public List<CgCodeList> findAllChildren(String upperCode) {
         return mapper.getAllChildren(upperCode);
+    }
+
+
+    /**
+     * @method      findAllCodePage
+     * @author      home
+     * @date        2025-03-31
+     * @deacription 코드 페이징 조회
+    **/
+    @Transactional(readOnly = true)
+    public Page<CgCodeList> findAllCodePage(CgCodeParam request, Pageable pageable) {
+        List<CgCodeList> list = mapper.page(pageable.generateMap(request));
+        int count = mapper.count(request);
+        return new Page<>(list, count, pageable);
     }
 }

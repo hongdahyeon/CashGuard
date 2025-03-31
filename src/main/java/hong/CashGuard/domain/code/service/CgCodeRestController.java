@@ -1,7 +1,10 @@
 package hong.CashGuard.domain.code.service;
 
+import hong.CashGuard.domain.code.dto.request.CgCodeParam;
 import hong.CashGuard.domain.code.dto.request.CgCodeSave;
 import hong.CashGuard.domain.code.dto.response.CgCodeList;
+import hong.CashGuard.global.bean.Page;
+import hong.CashGuard.global.bean.Pageable;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -60,6 +63,12 @@ public class CgCodeRestController {
     public ResponseEntity findAllChildren(@RequestParam("code") String code) {
         List<CgCodeList> childrenCodeList = service.findAllChildren(code);
         return ResponseEntity.ok(childrenCodeList);
+    }
+
+    @GetMapping
+    public ResponseEntity findAllCodePage(@Valid CgCodeParam request, Pageable pageable) {
+        Page<CgCodeList> allCodePage = service.findAllCodePage(request, pageable);
+        return ResponseEntity.ok(allCodePage);
     }
 
 }

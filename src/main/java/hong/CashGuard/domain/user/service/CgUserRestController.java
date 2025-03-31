@@ -2,7 +2,7 @@ package hong.CashGuard.domain.user.service;
 
 import hong.CashGuard.domain.user.dto.request.CgUserParam;
 import hong.CashGuard.domain.user.dto.request.CgUserSave;
-import hong.CashGuard.domain.user.dto.response.CgUserView;
+import hong.CashGuard.domain.user.dto.response.CgUserList;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import jakarta.validation.Valid;
@@ -40,13 +40,13 @@ public class CgUserRestController {
 
     @GetMapping
     public ResponseEntity findAllUserPage(@Valid CgUserParam param, Pageable pageable) {
-        Page<CgUserView> allUserPage = service.findAllUserPage(param, pageable);
+        Page<CgUserList> allUserPage = service.findAllUserPage(param, pageable);
         return ResponseEntity.ok(allUserPage);
     }
 
     @GetMapping("/list")
     public ResponseEntity findAllUserList(@Valid CgUserParam request) {
-        List<CgUserView> allUser = service.findAllUserList(request);
+        List<CgUserList> allUser = service.findAllUserList(request);
         return ResponseEntity.ok(allUser);
     }
 }

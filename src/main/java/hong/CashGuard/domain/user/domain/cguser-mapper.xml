@@ -86,7 +86,7 @@
         </if>
     </select>
 
-    <select id="list" resultType="CgUserView" parameterType="CgUserParam">
+    <select id="list" resultType="CgUserList" parameterType="CgUserParam">
         /* cgUser.list */
         SELECT UID
               ,USER_ID
@@ -105,6 +105,32 @@
           WHERE 1=1
         <if test="userNm != null and userNm != ''">
             AND USER_NM LIKE CONCAT('%',#{userNm},'%')
+        </if>
+    </select>
+
+    <select id="page" resultType="CgUserList" parameterType="CgUserParam">
+        /* cgUser.page */
+        SELECT UID
+              ,USER_ID
+              ,PASSWORD
+              ,USER_NM
+              ,USER_TEL
+              ,USER_EMAIL
+              ,LAST_CONN_DT
+              ,LAST_PASSWD_CHNG_DT
+              ,PROFILE_UID
+              ,IS_ENABLE
+              ,PWD_FAIL_CNT
+              ,IS_LOCKED
+              ,ROLE
+           FROM CASH_GUARD.CG_USER
+          WHERE 1=1
+        <if test="userNm != null and userNm != ''">
+            AND USER_NM LIKE CONCAT('%',#{userNm},'%')
+        </if>
+          ORDER BY REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+          LIMIT #{endNumber} OFFSET #{startNumber}
         </if>
     </select>
 </mapper>

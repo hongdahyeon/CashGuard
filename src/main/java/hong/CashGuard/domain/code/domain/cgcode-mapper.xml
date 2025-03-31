@@ -52,4 +52,58 @@
          WHERE CGCODE.UPPER_CODE = #{upperCode}
            AND CGCODE.USE_AT= 'Y'
     </select>
+
+    <select id="page" resultType="CgCodeList" parameterType="CgCodeParam">
+        /* cgCode.page */
+        SELECT CGCODE.UID
+              ,CGCODE.UPPER_CODE
+              ,CGCODE.CODE
+              ,CGCODE.CODE_NM
+              ,CGCODE.USE_AT
+              ,CGCODE.REG_UID
+              ,CGCODE.REG_DT
+              ,CG_REG.USER_NM AS REG_NM
+              ,CGCODE.UPDT_UID
+              ,CGCODE.UPDT_DT
+              ,CG_UPDT.USER_NM AS UPDT_NM
+              ,(SELECT COUNT(*)
+                  FROM CASH_GUARD.CG_CODE CGCODE2
+                 WHERE CGCODE2.UPPER_CODE = CGCODE.CODE
+                   AND CGCODE2.USE_AT = 'Y') AS CHILD_CNT
+          FROM CASH_GUARD.CG_CODE AS CGCODE
+          LEFT JOIN CASH_GUARD.CG_USER CG_REG ON CG_REG.UID = CGCODE.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CG_UPDT ON CG_UPDT.UID = CGCODE.REG_UID
+         WHERE 1=1
+        <if test="code != null and code != ''">
+           AND CGCODE.CODE LIKE CONCAT('%',#{code},'%')
+        </if>
+        <if test="codeNm != null and codeNm != ''">
+           AND CGCODE.CODE_NM LIKE CONCAT('%',#{codeNm},'%')
+        </if>
+        <if test="useAt != null and useAt != ''">
+           AND CGCODE.USE_AT = #{useAt}
+        </if>
+         ORDER BY REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="count" parameterType="CgCodeParam" resultType="int">
+        /* cgCode.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_CODE AS CGCODE
+          LEFT JOIN CASH_GUARD.CG_USER CG_REG ON CG_REG.UID = CGCODE.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CG_UPDT ON CG_UPDT.UID = CGCODE.REG_UID
+         WHERE 1=1
+        <if test="code != null and code != ''">
+           AND CGCODE.CODE LIKE CONCAT('%',#{code},'%')
+        </if>
+        <if test="codeNm != null and codeNm != ''">
+           AND CGCODE.CODE_NM LIKE CONCAT('%',#{codeNm},'%')
+        </if>
+        <if test="useAt != null and useAt != ''">
+           AND CGCODE.USE_AT = #{useAt}
+        </if>
+    </select>
 </mapper>

@@ -24,6 +24,7 @@ public class CgCodeList {
     private String code;
     private String codeNm;
     private String useAt;
+    private int childCnt;
     private Long regUid;
     private String regNm;
     private String regDt;

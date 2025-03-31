@@ -4,7 +4,7 @@ import hong.CashGuard.domain.user.domain.CgUser;
 import hong.CashGuard.domain.user.domain.CgUserMapper;
 import hong.CashGuard.domain.user.dto.request.CgUserParam;
 import hong.CashGuard.domain.user.dto.request.CgUserSave;
-import hong.CashGuard.domain.user.dto.response.CgUserView;
+import hong.CashGuard.domain.user.dto.response.CgUserList;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import lombok.RequiredArgsConstructor;
@@ -41,15 +41,15 @@ public class CgUserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CgUserView> findAllUserPage(CgUserParam param, Pageable pageable) {
-        List<CgUserView> list = mapper.list(pageable.generateMap(param));
+    public Page<CgUserList> findAllUserPage(CgUserParam param, Pageable pageable) {
+        List<CgUserList> list = mapper.page(pageable.generateMap(param));
         int count = mapper.count(param);
         return new Page<>(list, count, pageable);
     }
 
 
     @Transactional(readOnly = true)
-    public List<CgUserView> findAllUserList(CgUserParam param) {
+    public List<CgUserList> findAllUserList(CgUserParam param) {
         return mapper.list(param);
     }
 
