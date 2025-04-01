@@ -82,10 +82,10 @@ public class LoggingInterceptor implements HandlerInterceptor {
         String method = req.getMethod();
 
         /* URI */
-        logs.append("\n# URI: ").append(requestURI);
+        logs.append("\n# URI     : ").append(requestURI);
 
         /* METHOD */
-        logs.append("\n# METHOD: ").append(method);
+        logs.append("\n# METHOD  : ").append(method);
 
         /* PARAMS */
         int parameterLength = 0;
@@ -118,7 +118,7 @@ public class LoggingInterceptor implements HandlerInterceptor {
         if(stopWatch != null) {
             stopWatch.stop();
             double totalTime = stopWatch.getTotalTimeSeconds();
-            logs.append(String.format("\n ==> TIMES: %.2f sec", totalTime));
+            logs.append(String.format("\n==> TIMES : %.2f sec", totalTime));
         }
 
         logs.append("\n===========================================================");

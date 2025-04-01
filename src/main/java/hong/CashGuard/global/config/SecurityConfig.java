@@ -2,8 +2,8 @@ package hong.CashGuard.global.config;
 
 import hong.CashGuard.global.handler.CustomAccessDeniedHandler;
 import hong.CashGuard.global.handler.CustomAuthenticationHandler;
-import hong.CashGuard.global.handler.CustomLoginFailureHandler;
-import hong.CashGuard.global.handler.CustomLoginSuccessHandler;
+import hong.CashGuard.global.handler.login.CustomLoginFailureHandler;
+import hong.CashGuard.global.handler.login.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -52,8 +52,8 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         res.setStatus(HttpServletResponse.SC_FORBIDDEN);
         res.setContentType("application/json;charset=UTF-8");
         PrintWriter writer = res.getWriter();
-        ErrorResponse errorrResponse = new ErrorResponse(HttpStatus.FORBIDDEN, message, error);
-        String jsonResponse = ErrorResponse.toJson(errorrResponse);
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, message, error);
+        String jsonResponse = ErrorResponse.toJson(errorResponse);
         writer.write(jsonResponse);
         writer.flush();
     }

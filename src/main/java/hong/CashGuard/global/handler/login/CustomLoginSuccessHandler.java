@@ -1,4 +1,4 @@
-package hong.CashGuard.global.handler;
+package hong.CashGuard.global.handler.login;
 
 import hong.CashGuard.domain.user.service.CgSecurityUserService;
 import hong.CashGuard.global.auth.PrincipalDetails;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 /**
- * packageName    : hong.CashGuard.global.handler
+ * packageName    : hong.CashGuard.global.handler.login
  * fileName       : CustomLoginSuccessHandler
  * author         : work
  * date           : 2025-03-27
@@ -25,6 +25,7 @@ import java.io.IOException;
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
  * 2025-04-01        work       로그인 성공시, {role} 값도 함께 출력
+ * 2025-04-02        work       파일 이동
  */
 
 @Slf4j
