@@ -34,6 +34,14 @@ public class CgCodeRestController {
 
     private final CgCodeService service;
 
+    /**
+     *
+     * 부모 코드 저장
+     *
+     * @api         [POST] /cguard/api/code/super
+     * @author      home
+     * @date        2025-03-31
+    **/
     @PostMapping
     public ResponseEntity saveParentCode(@RequestBody @Valid CgCodeSave request) {
         if( !service.isExistCode(request.getCode()) ) {
@@ -45,6 +53,14 @@ public class CgCodeRestController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     *
+     * 코드 중복 체크
+     *
+     * @api         [GET] /cguard/api/code/super/duplicate-check
+     * @author      home
+     * @date        2025-03-31
+    **/
     @GetMapping("/duplicate-check")
     public ResponseEntity checkDuplicateCode(@RequestParam("code") String code) {
         boolean checkCanUse = service.isExistCode(code);
@@ -59,12 +75,29 @@ public class CgCodeRestController {
         return ResponseEntity.ok(map);
     }
 
+    /**
+     *
+     * 부모 코드 하위의 자식 코드 목록 조회 (리스트)
+     *
+     * @api         [GET] /cguard/api/code/super/all-children
+     * @author      home
+     * @date        2025-03-31
+    **/
     @GetMapping("/all-children")
     public ResponseEntity findAllChildren(@RequestParam("code") String code) {
         List<CgCodeList> childrenCodeList = service.findAllChildren(code);
         return ResponseEntity.ok(childrenCodeList);
     }
 
+
+    /**
+     *
+     * 코드 목록 조회 (페이징)
+     *
+     * @api         [GET] /cguard/api/code/super
+     * @author      home
+     * @date        2025-03-31
+    **/
     @GetMapping
     public ResponseEntity findAllCodePage(@Valid CgCodeParam request, Pageable pageable) {
         Page<CgCodeList> allCodePage = service.findAllCodePage(request, pageable);

@@ -1,5 +1,6 @@
 package hong.CashGuard.global.handler.advice;
 
+import hong.CashGuard.global.exception.CGException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;
@@ -25,9 +26,9 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-28        work       최초 생성
- * 2024-03-31        home       valid, param 관련 error handle 추가
+ * 2025-03-31        home       valid, param 관련 error handle 추가
+ * 2025-04-01        work       CGException handle 추가
  */
-
 
 @RestControllerAdvice
 public class GlobalRestExceptionHandler {
@@ -94,4 +95,10 @@ public class GlobalRestExceptionHandler {
         return errors;
     }
 
+    @ExceptionHandler(CGException.class)
+    public ResponseEntity cgException(CGException e) {
+        return ResponseEntity
+                .status(e.getStatus())
+                .body(e.getMessage());
+    }
 }

@@ -1,5 +1,6 @@
 package hong.CashGuard.global.config;
 
+import org.springframework.http.HttpMethod;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 /**
@@ -12,6 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-01        work       PUBLIC_API 추가 ( 해당 부분은 Method & API 값이 동일해야 접근 가능 )
  */
 public class Paths {
 
@@ -26,18 +28,24 @@ public class Paths {
             ,new AntPathRequestMatcher("/login/force.json")
     };
 
+    public static final AntPathRequestMatcher[] PUBLIC_API = new AntPathRequestMatcher[]{
+            new AntPathRequestMatcher("/cguard/api/user", HttpMethod.POST.name())
+           ,new AntPathRequestMatcher("/cguard/api/user/change-password", HttpMethod.PUT.name())
+
+    };
+
     public static final AntPathRequestMatcher[] AFTER_LOGIN = new  AntPathRequestMatcher[]{
             new AntPathRequestMatcher("/cguard/api/**")
-            ,new AntPathRequestMatcher("/cguard/**")
+           ,new AntPathRequestMatcher("/cguard/**")
     };
 
     public static final AntPathRequestMatcher[] ROLE_SUPER = new  AntPathRequestMatcher[]{
             new AntPathRequestMatcher("/cguard/api/**/super/**")
-            ,new AntPathRequestMatcher("/cguard/super/**")
+           ,new AntPathRequestMatcher("/cguard/super/**")
     };
 
     public static final AntPathRequestMatcher[] ROLE_MANAGER = new  AntPathRequestMatcher[]{
             new AntPathRequestMatcher("/cguard/api/**/manager/**")
-            ,new AntPathRequestMatcher("/cguard/manager/**")
+           ,new AntPathRequestMatcher("/cguard/manager/**")
     };
 }

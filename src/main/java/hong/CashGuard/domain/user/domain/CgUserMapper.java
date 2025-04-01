@@ -16,6 +16,8 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-01        work       * 리턴값 {update}의 경우 int로 변경
+ *                              * updateLastPasswdChngDt, updateUserToUnLock 추가
  */
 
 @Mapper
@@ -23,7 +25,13 @@ public interface CgUserMapper extends BaseMapper<CgUser> {
 
     CgUserView findUserByUserId(String userId);
 
-    void updateLastLoginDtAndPwdFailCnt(String userId);
+    int updateLastLoginDtAndPwdFailCnt(String userId);
 
-    void updatePwdFailCnt(Map<String, Object> params);
+    int updatePwdFailCnt(Map<String, Object> params);
+
+    int updateLastPasswdChngDt(CgUser bean);
+
+    int updateUserToUnLock(CgUser bean);
+
+    int updateUserIsEnable(CgUser bean);
 }

@@ -1,7 +1,8 @@
 package hong.CashGuard.global.handler;
 
 import hong.CashGuard.domain.user.service.CgSecurityUserService;
-import hong.CashGuard.domain.user.service.CgUserService;
+import hong.CashGuard.global.auth.PrincipalDetails;
+import hong.CashGuard.global.auth.dto.CgSessionUser;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,6 +24,7 @@ import java.io.IOException;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-01        work       로그인 성공시, {role} 값도 함께 출력
  */
 
 @Slf4j
@@ -42,7 +44,9 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
         } else {
 
-            log.info("======================= Login User: {} ===========================", userId);
+            CgSessionUser user = ((PrincipalDetails) authentication.getPrincipal()).getUser();
+            String role = user.getRole();
+            log.info("======================= Login User: {} [Role: {}] ===========================", userId,  role);
             userService.resetLastLoginDtAndPwdFailCnt(userId);
         }
 

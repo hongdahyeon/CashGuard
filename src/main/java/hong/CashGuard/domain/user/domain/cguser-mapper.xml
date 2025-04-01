@@ -101,10 +101,10 @@
               ,PWD_FAIL_CNT
               ,IS_LOCKED
               ,ROLE
-           FROM CASH_GUARD.CG_USER
-          WHERE 1=1
+          FROM CASH_GUARD.CG_USER
+         WHERE 1=1
         <if test="userNm != null and userNm != ''">
-            AND USER_NM LIKE CONCAT('%',#{userNm},'%')
+           AND USER_NM LIKE CONCAT('%',#{userNm},'%')
         </if>
     </select>
 
@@ -133,4 +133,71 @@
           LIMIT #{endNumber} OFFSET #{startNumber}
         </if>
     </select>
+
+    <select id="view" parameterType="Long" resultType="CgUser">
+        /* cgUser.view */
+        SELECT UID
+              ,USER_ID
+              ,PASSWORD
+              ,USER_NM
+              ,USER_TEL
+              ,USER_EMAIL
+              ,LAST_CONN_DT
+              ,LAST_PASSWD_CHNG_DT
+              ,PROFILE_UID
+              ,IS_ENABLE
+              ,PWD_FAIL_CNT
+              ,IS_LOCKED
+              ,ROLE
+              ,REG_UID
+              ,REG_DT
+              ,UPDT_UID
+              ,UPDT_DT
+          FROM CASH_GUARD.CG_USER
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgUser">
+        /* cgUser.update */
+        UPDATE CASH_GUARD.CG_USER
+           SET USER_NM = #{userNm}
+              ,USER_TEL = #{userTel}
+              ,USER_EMAIL = #{userEmail}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+           <if test="password != null and password != ''">
+              ,PASSWORD = #{password}
+           </if>
+         WHERE UID = #{uid}
+    </update>
+
+    <update id="updateLastPasswdChngDt" parameterType="CgUser">
+        /* cgUser.updateLastPasswdChngDt */
+        UPDATE CASH_GUARD.CG_USER
+           SET LAST_PASSWD_CHNG_DT = (NOW() + INTERVAL '90' DAY)
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+            <if test="password != null and password != ''">
+              ,PASSWORD = #{password}
+            </if>
+         WHERE USER_ID = #{userId}
+    </update>
+
+    <update id="updateUserToUnLock" parameterType="CgUser">
+        /* cgUser.updateUserToUnLock */
+        UPDATE CASH_GUARD.CG_USER
+           SET IS_LOCKED = 'N'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <update id="updateUserIsEnable" parameterType="CgUser">
+        /* cgUser.updateUserIsEnable */
+        UPDATE CASH_GUARD.CG_USER
+           SET IS_ENABLE = #{isEnable}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
 </mapper>
