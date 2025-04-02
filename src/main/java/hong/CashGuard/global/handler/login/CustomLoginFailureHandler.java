@@ -1,14 +1,13 @@
-package hong.CashGuard.global.handler;
+package hong.CashGuard.global.handler.login;
 
 import hong.CashGuard.domain.user.dto.response.CgUserView;
 import hong.CashGuard.domain.user.service.CgSecurityUserService;
-import hong.CashGuard.domain.user.service.CgUserService;
+import hong.CashGuard.global.handler.FailureException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -19,7 +18,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * packageName    : hong.CashGuard.global.handler
+ * packageName    : hong.CashGuard.global.handler.login
  * fileName       : CustomLoginFailureHandler
  * author         : work
  * date           : 2025-03-27
@@ -34,6 +33,7 @@ import java.nio.charset.StandardCharsets;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-02        work       파일 이동
  */
 
 @Slf4j

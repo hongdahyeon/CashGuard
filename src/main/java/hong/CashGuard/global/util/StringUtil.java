@@ -12,6 +12,7 @@ import java.util.Random;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-01        work       {getOrDefault} 메소드 추가
  */
 public class StringUtil {
 
@@ -48,5 +49,9 @@ public class StringUtil {
         }
 
         return password.toString();
+    }
+
+    public static <T> T getOrDefault(T value, T defaultValue) {
+        return (value != null) ? value : defaultValue;
     }
 }

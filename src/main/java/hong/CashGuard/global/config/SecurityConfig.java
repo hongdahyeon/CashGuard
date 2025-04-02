@@ -1,11 +1,12 @@
 package hong.CashGuard.global.config;
 
-import hong.CashGuard.global.handler.CustomLoginFailureHandler;
-import hong.CashGuard.global.handler.CustomLoginSuccessHandler;
+import hong.CashGuard.global.handler.CustomAccessDeniedHandler;
+import hong.CashGuard.global.handler.CustomAuthenticationHandler;
+import hong.CashGuard.global.handler.login.CustomLoginFailureHandler;
+import hong.CashGuard.global.handler.login.CustomLoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +30,8 @@ import java.util.List;
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
  * 2025-03-31        home       전체 접근 허가 URL (사용자 추가) 따로 빼기
+ * 2025-04-01        work       * denied, authentication handler 추가
+ *                              * [permitAll] : Paths 영역으로 빼기
  */
 
 @Configuration
@@ -38,6 +41,8 @@ public class SecurityConfig {
 
     private final CustomLoginSuccessHandler successHandler;
     private final CustomLoginFailureHandler failureHandler;
+    private final CustomAccessDeniedHandler deniedHandler;
+    private final CustomAuthenticationHandler authenticationHandler;
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -54,11 +59,23 @@ public class SecurityConfig {
     **/
     private void configureAuthorization(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry auth) {
         auth.requestMatchers(Paths.BEFORE_LOGIN).permitAll() // 로그인 전 접근 가능
-            .requestMatchers(HttpMethod.POST, "/cguard/api/user").permitAll()
+            .requestMatchers(Paths.PUBLIC_API).permitAll()
             .requestMatchers(Paths.ROLE_SUPER).hasAuthority("ROLE_SUPER") // {ROLE_SUPER} 권한만 접근 가능
             .requestMatchers(Paths.ROLE_MANAGER).hasAnyAuthority("ROLE_SUPER", "ROLE_MANAGER") // {ROLE_SUPER}, {ROLE_MANAGER} 권한만 접근 가능
             .requestMatchers(Paths.AFTER_LOGIN).authenticated() // 로그인 후 접근 가능
             .anyRequest().authenticated(); // 나머지 요청도 로그인 필요
+    }
+
+    /**
+     * @method      configureHandler
+     * @author      work
+     * @date        2025-04-01
+     * @deacription 403, 401 핸들러 처리
+    **/
+    private void configureHandler(ExceptionHandlingConfigurer<HttpSecurity> exception) {
+        exception
+            .accessDeniedHandler(deniedHandler)
+            .authenticationEntryPoint(authenticationHandler);
     }
 
     /**
@@ -98,8 +115,8 @@ public class SecurityConfig {
     private void configureFormLogin(FormLoginConfigurer<HttpSecurity> formLoginConfigurer) {
         formLoginConfigurer
                 .loginPage(Paths.LOGIN)                     // 로그인 페이지 경로
-                .successHandler(successHandler)      // 로그인 성공 핸들러
-                .failureHandler(failureHandler)      // 로그인 실패 핸들러
+                .successHandler(successHandler)             // 로그인 성공 핸들러
+                .failureHandler(failureHandler)             // 로그인 실패 핸들러
                 .usernameParameter("userId")                // 사용자 아이디 파라미터 이름
                 .loginProcessingUrl("/loginProc");          // 로그인 처리 URL
     }
@@ -143,6 +160,7 @@ public class SecurityConfig {
             .cors(corsConfigurer -> corsConfigurer.configurationSource(request -> corsConfiguration()))
             .headers(header -> configureHeaders(header))
             .authorizeHttpRequests(auth -> configureAuthorization(auth))
+            .exceptionHandling(ex -> configureHandler(ex))
             .formLogin(form -> configureFormLogin(form))
             /*.oauth2Login(oauth2LoginConfigurer -> configureOAuth2Login(oauth2LoginConfigurer)) // TODO : OAuth2Login 설정 호출 */
             .logout(logout -> configureLogout(logout));
