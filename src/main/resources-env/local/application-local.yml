@@ -5,3 +5,16 @@ spring:
     password: '0427'  # 데이터베이스 비밀번호
     driver-class-name: org.mariadb.jdbc.Driver
     allow-multi-query: true
+
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: ''
+#    password: ''
+#    properties:
+#      mail:
+#        debug: true
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true

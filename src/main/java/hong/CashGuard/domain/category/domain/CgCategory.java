@@ -48,8 +48,8 @@ public class CgCategory extends AuditBean {
      * @date        2025-04-02
      * @deacription 카테고리 수정 생성자
     **/
-    public CgCategory changeCategory(Long uid, CgCategoryChange request) {
-        this.uid = uid;
+    public CgCategory changeCategory(Long categoryUid, CgCategoryChange request) {
+        this.uid = categoryUid;
         this.categoryNm = StringUtil.getOrDefault(request.getCategoryNm(), this.categoryNm);
         this.useAt = StringUtil.getOrDefault(request.getUseAt(), this.useAt);
         return this;

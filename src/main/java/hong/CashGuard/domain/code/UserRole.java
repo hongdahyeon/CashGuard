@@ -2,8 +2,6 @@ package hong.CashGuard.domain.code;
 
 import lombok.Getter;
 
-import java.util.Arrays;
-
 /**
  * packageName    : hong.CashGuard.domain.code
  * fileName       : UserRole

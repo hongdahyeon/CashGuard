@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.emaillog.domain.CgEmailLogMapper">
+
+    <insert id="insert" parameterType="CgEmailLog">
+        /* cgEmailLog.insert */
+        INSERT INTO CASH_GUARD.CG_EMAIL_LOG (
+             EMAIL_TOKEN
+            ,RECIPIENT_EMAIL
+            ,SENDER_EMAIL
+            ,SUBJECT
+            ,CONTENT
+            ,REASON_CODE
+            ,SENT_DT
+            ,IS_READ
+        ) VALUES (
+             #{emailToken}
+            ,#{recipientEmail}
+            ,#{senderEmail}
+            ,#{subject}
+            ,#{content}
+            ,#{reasonCode}
+            ,NOW()
+            ,#{isRead}
+        )
+    </insert>
+
+</mapper>

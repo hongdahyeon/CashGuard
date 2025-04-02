@@ -62,9 +62,9 @@ public class CgCategoryService {
      * @deacription 카테고리 정보 수정
     **/
     @Transactional
-    public void changeCategory(Long uid, CgCategoryChange request) {
-        CgCategory myView = mapper.view(uid);
-        mapper.update(myView.changeCategory(uid, request));
+    public void changeCategory(Long categoryUid, CgCategoryChange request) {
+        CgCategory myView = mapper.view(categoryUid);
+        mapper.update(myView.changeCategory(categoryUid, request));
     }
 
     /**
