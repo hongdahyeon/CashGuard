@@ -25,6 +25,17 @@
         )
     </insert>
 
+    <update id="update" parameterType="CgCode">
+        /* cgCode.update */
+        UPDATE CASH_GUARD.CG_CODE
+           SET UPPER_CODE = #{upperCode}
+              ,CODE_NM = #{codeNm}
+              ,USE_AT = #{useAt}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE CODE = #{code}
+    </update>
+
     <select id="isExistCode" parameterType="String">
         /* cgCode.isExistCode */
         SELECT COUNT(*)
@@ -74,6 +85,7 @@
           LEFT JOIN CASH_GUARD.CG_USER CG_REG ON CG_REG.UID = CGCODE.REG_UID
           LEFT JOIN CASH_GUARD.CG_USER CG_UPDT ON CG_UPDT.UID = CGCODE.REG_UID
          WHERE 1=1
+           AND CGCODE.UPPER_CODE IS NULL
         <if test="code != null and code != ''">
            AND CGCODE.CODE LIKE CONCAT('%',#{code},'%')
         </if>
@@ -96,6 +108,7 @@
           LEFT JOIN CASH_GUARD.CG_USER CG_REG ON CG_REG.UID = CGCODE.REG_UID
           LEFT JOIN CASH_GUARD.CG_USER CG_UPDT ON CG_UPDT.UID = CGCODE.REG_UID
          WHERE 1=1
+           AND CGCODE.UPPER_CODE IS NULL
         <if test="code != null and code != ''">
            AND CGCODE.CODE LIKE CONCAT('%',#{code},'%')
         </if>
@@ -105,5 +118,16 @@
         <if test="useAt != null and useAt != ''">
            AND CGCODE.USE_AT = #{useAt}
         </if>
+    </select>
+
+    <select id="view" parameterType="String" resultType="CgCode">
+        /* cgCode.view */
+        SELECT UID
+              ,UPPER_CODE
+              ,CODE
+              ,CODE_NM
+              ,USE_AT
+          FROM CASH_GUARD.CG_CODE
+         WHERE CODE = #{code}
     </select>
 </mapper>

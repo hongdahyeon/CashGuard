@@ -2,6 +2,8 @@ package hong.CashGuard.domain.code.service;
 
 import hong.CashGuard.domain.code.domain.CgCode;
 import hong.CashGuard.domain.code.domain.CgCodeMapper;
+import hong.CashGuard.domain.code.dto.request.CgCodeMerge;
+import hong.CashGuard.domain.code.dto.request.CgCodeObj;
 import hong.CashGuard.domain.code.dto.request.CgCodeParam;
 import hong.CashGuard.domain.code.dto.request.CgCodeSave;
 import hong.CashGuard.domain.code.dto.response.CgCodeList;
@@ -23,6 +25,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-31        home       최초 생성
+ * 2025-04-02        work       부모 코드 수정 + 자식 코드 수정/저장 로직 추가
  */
 
 @Service
@@ -79,5 +82,36 @@ public class CgCodeService {
         List<CgCodeList> list = mapper.page(pageable.generateMap(request));
         int count = mapper.count(request);
         return new Page<>(list, count, pageable);
+    }
+
+    /**
+     * @method      saveAllProcess
+     * @author      work
+     * @date        2025-04-02
+     * @deacription 부모 코드 수정 + 자식 코드 수정/저장
+    **/
+    @Transactional
+    public void saveAllProcess(CgCodeMerge request) {
+
+        // 1. 부모 코드 수정
+        String parentCode = request.getParent().getCode();
+        CgCode parentView = mapper.view(parentCode);
+        mapper.update(parentView.changeCode(parentCode, request.getParent()));
+
+        // 2. 자식 코드 수정
+        if( request.getAddChild() != null && !request.getAddChild().isEmpty() ) {
+            for (CgCodeObj child : request.getAddChild()) {
+                mapper.insert(new CgCode(parentCode, child));
+            }
+        }
+
+        // 3. 자식 코드 저장
+        if( request.getUpdtChild() != null && !request.getUpdtChild().isEmpty() ) {
+            for ( CgCodeObj child : request.getUpdtChild() ) {
+                String childCode = child.getCode();
+                CgCode childView = mapper.view(childCode);
+                mapper.update(childView.changeCode(childCode, child));
+            }
+        }
     }
 }

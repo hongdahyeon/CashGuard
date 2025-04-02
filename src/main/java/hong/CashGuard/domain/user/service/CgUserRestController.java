@@ -26,6 +26,7 @@ import java.util.List;
  * 2025-03-27        work       최초 생성
  * 2025-03-31        home       list, page API 추가
  * 2025-04-01        work       update API 추가
+ * 2025-04-02        work       * 유저 페이징 조회 API 수정 : /cguard/api/user/page
  */
 
 @RestController
@@ -42,7 +43,6 @@ public class CgUserRestController {
      * @api         [POST] /cguard/api/user
      * @author      work
      * @date        2025-03-27
-     * @param       request 사용자 정보 저장 DTO
     **/
     @PostMapping
     public ResponseEntity saveUser(@RequestBody @Valid CgUserSave request) {
@@ -68,11 +68,11 @@ public class CgUserRestController {
      *
      * 사용자 목록 조회 (페이징)
      *
-     * @api         [GET] /cguard/api/user
+     * @api         [GET] /cguard/api/user/page
      * @author      home
      * @date        2025-03-31
     **/
-    @GetMapping
+    @GetMapping("/page")
     public ResponseEntity findAllUserPage(@Valid CgUserParam param, Pageable pageable) {
         Page<CgUserList> allUserPage = service.findAllUserPage(param, pageable);
         return ResponseEntity.ok(allUserPage);

@@ -14,6 +14,7 @@ import java.util.List;
  * 2025-03-27        work       최초 생성
  * 2025-03-31        home       * 상위 패키지명 변경 (core->bean)
  *                              * list, count, page 추가
+ * 2025-04-02        work       key 값을 파라미터로 받는 view 추가
  */
 public interface BaseMapper<T> {
 
@@ -30,4 +31,6 @@ public interface BaseMapper<T> {
     int delete(Long uid);
 
     T view(Long uid);
+
+    T view(String key);
 }

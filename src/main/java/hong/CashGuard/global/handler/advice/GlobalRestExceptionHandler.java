@@ -1,11 +1,11 @@
 package hong.CashGuard.global.handler.advice;
 
 import hong.CashGuard.global.exception.CGException;
+import hong.CashGuard.global.validator.ValidationErrorProcessor;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +28,8 @@ import java.util.Map;
  * 2025-03-28        work       최초 생성
  * 2025-03-31        home       valid, param 관련 error handle 추가
  * 2025-04-01        work       CGException handle 추가
+ * 2025-04-02        work       handleValidationExceptions 따로 로직 분리
+ *                              => 객체 안에 객체, 객체 배열에 대해 처리를 위함
  */
 
 @RestControllerAdvice
@@ -87,14 +89,16 @@ public class GlobalRestExceptionHandler {
     **/
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            errors.put(error.getField(), error.getDefaultMessage());
-        }
-        return errors;
+    public Map<String, Object> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        return ValidationErrorProcessor.processErrors(ex);
     }
 
+    /**
+     * @method      cgException
+     * @author      work
+     * @date        2025-04-02
+     * @deacription 기본적인 CgException 에러를 터트렸을때 타게 되는 핸들러
+    **/
     @ExceptionHandler(CGException.class)
     public ResponseEntity cgException(CGException e) {
         return ResponseEntity
