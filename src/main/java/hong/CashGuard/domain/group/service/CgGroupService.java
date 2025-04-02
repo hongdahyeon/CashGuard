@@ -181,11 +181,12 @@ public class CgGroupService {
         // 2. 전송할 이메일 정보 세팅하기
         // => 제목, 내용, 이메일 전송 이유, 이메일 토큰
         String groupNm = groupView.getGroupNm();
-        String title = this.createMailTitle(groupNm, request.getRecipientNm());
-        String content = this.createMailContent(groupNm, request.getRecipientNm());
-        String reasonCode = EmailSendReason.INVITE_GROUP.name();
         // TODO MAKE EMAIL TOKEN > groupUid, reasonCode
-        String emailToken = "";
+        String emailToken = "test";
+        String invitationLink = String.format("http://localhost:8084/invite-link/%s", emailToken);
+        String title = this.createMailTitle(groupNm, request.getRecipientNm());
+        String content = this.createMailContent(groupNm, request.getRecipientNm(), invitationLink);
+        String reasonCode = EmailSendReason.INVITE_GROUP.name();
 
         // 3. 이메일 전송 및 이메일 전송 로그 저장
         EmailLogSave emailBuilder = EmailLogSave.saveEmailLog()
@@ -206,8 +207,7 @@ public class CgGroupService {
      **/
     private String createMailTitle(String groupNm, String recipientNm) {
         // TODO : 제목 템플릿 만들기
-        String title = "";
-        return title;
+        return String.format("[Cash Guard] %s님, '%s' 그룹 초대장이 도착했습니다!", recipientNm, groupNm);
     }
 
     /**
@@ -216,9 +216,19 @@ public class CgGroupService {
      * @date        2025-04-02
      * @deacription 그룹 초대 > 이메일 내용 생성
     **/
-    private String createMailContent(String groupNm, String recipientNm) {
+    private String createMailContent(String groupNm, String recipientNm, String invitationLink) {
         // TODO : 내용 템플릿 만들기
-        String content = "";
-        return content;
+        return """
+        <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; text-align: center; padding: 20px;">
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 400px; margin: auto;">
+                <h2 style="color: #333;">📩 Cash Guard 초대장</h2>
+                <p><strong>%s</strong>님,</p>
+                <p>당신을 <strong>%s</strong> 그룹으로 초대합니다!</p>
+                <a href="%s" style="display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">
+                    초대 수락하기
+                </a>
+            </div>
+        </body>
+        """.formatted(recipientNm, groupNm, invitationLink);
     }
 }

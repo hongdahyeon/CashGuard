@@ -3,6 +3,7 @@ package hong.CashGuard.domain.emaillog.service;
 import hong.CashGuard.domain.emaillog.domain.CgEmailLog;
 import hong.CashGuard.domain.emaillog.domain.CgEmailLogMapper;
 import hong.CashGuard.domain.emaillog.dto.request.EmailLogSave;
+import hong.CashGuard.global.mail.GoogleEmailService;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -40,11 +41,11 @@ public class CgEmailLogService {
 
         // 2. 이메일 전송
         // TODO : 이메일 발송 기능 구현
-        /*googleEmailService.sendMail(request.getRecipientEmail(),
+        googleEmailService.sendMail(request.getRecipientEmail(),
                                     UserUtil.getLoginUser().getUserEmail(),
                                     UserUtil.getLoginUser().getUserNm(),
                                     request.getSubject(),
-                                    request.getContent());*/
+                                    request.getContent());
     }
 
 }
