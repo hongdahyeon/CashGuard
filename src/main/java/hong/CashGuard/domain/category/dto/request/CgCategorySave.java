@@ -1,4 +1,4 @@
-package hong.CashGuard.domain.code.dto.request;
+package hong.CashGuard.domain.category.dto.request;
 
 import hong.CashGuard.global.annotation.YorN;
 import jakarta.validation.constraints.NotBlank;
@@ -7,11 +7,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : hong.CashGuard.domain.code.dto.request
- * fileName       : CgCodeObj
+ * packageName    : hong.CashGuard.domain.category.dto.request
+ * fileName       : CgCategorySave
  * author         : work
  * date           : 2025-04-02
- * description    : CgCodeMerge 용
+ * description    : 카테고리 저장 DTO
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
@@ -19,16 +19,16 @@ import lombok.NoArgsConstructor;
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CgCodeObj {
-
-    private Long uid;
-    private String upperCode;
+public class CgCategorySave {
 
     @NotBlank
-    private String code;
+    private String categoryCd;
 
     @NotBlank
-    private String codeNm;
+    private String categoryNm;
+
+    @NotBlank
+    private String categoryTp;
 
     @YorN(allowNull = false)
     private String useAt;

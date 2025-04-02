@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.category.domain.CgCategoryMapper">
+
+    <insert id="insert" parameterType="CgCategory">
+        /* cgCategory.insert */
+        INSERT INTO CASH_GUARD.CG_CATEGORY (
+             CATEGORY_CD
+            ,CATEGORY_NM
+            ,CATEGORY_TP
+            ,USE_AT
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{categoryCd}
+            ,#{categoryNm}
+            ,#{categoryTp}
+            ,#{useAt}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+
+    <select id="isExistCategoryCode" parameterType="String">
+        /* cgCategory.isExistCategoryCode */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_CATEGORY
+         WHERE CATEGORY_CD = #{categoryCd}
+    </select>
+
+    <select id="view" parameterType="Long" resultType="CgCategory">
+        /* cgCategory.view */
+        SELECT UID
+              ,CATEGORY_CD
+              ,CATEGORY_NM
+              ,CATEGORY_TP
+              ,USE_AT
+          FROM CASH_GUARD.CG_CATEGORY
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgCategory">
+        /* cgCategory.update */
+        UPDATE CASH_GUARD.CG_CATEGORY
+           SET CATEGORY_NM = #{categoryNm}
+              ,USE_AT = #{useAt}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <select id="page" parameterType="CgCategoryParam" resultType="CgCategoryList">
+        /* cgCategory.page */
+        SELECT CATEGORY.UID
+              ,CATEGORY.CATEGORY_CD
+              ,CATEGORY.CATEGORY_NM
+              ,CATEGORY.CATEGORY_TP
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN '지출 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                     END AS CATEGORY_TP_NM
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN false
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN false
+                     END AS CATEGORY_TP_IS_ADD
+              ,CATEGORY.USE_AT
+              ,CATEGORY.REG_UID
+              ,TO_CHAR(CATEGORY.REG_DT, 'YYYY-MM-DD') AS REG_DT
+              ,USER_REG.USER_NM AS REG_NM
+              ,CATEGORY.UPDT_UID
+              ,TO_CHAR(CATEGORY.UPDT_DT, 'YYYY-MM-DD') AS UPDT_DT
+              ,USER_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_CATEGORY CATEGORY
+          LEFT JOIN CASH_GUARD.CG_USER USER_REG ON USER_REG.UID = CATEGORY.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER USER_UPDT ON USER_UPDT.UID = CATEGORY.UPDT_UID
+         WHERE 1 = 1
+        <if test="useAt != null and useAt != ''">
+           AND CATEGORY.USE_AT = #{useAt}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CATEGORY.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="categoryNm != null and categoryNm != ''">
+           AND CATEGORY.CATEGORY_NM LIKE CONCAT('%',#{categoryNm},'%')
+        </if>
+         ORDER BY CATEGORY.REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="count" resultType="int" parameterType="CgCategoryParam">
+        /* cgCategory.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_CATEGORY CATEGORY
+          LEFT JOIN CASH_GUARD.CG_USER USER_REG ON USER_REG.UID = CATEGORY.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER USER_UPDT ON USER_UPDT.UID = CATEGORY.UPDT_UID
+         WHERE 1 = 1
+        <if test="useAt != null and useAt != ''">
+           AND CATEGORY.USE_AT = #{useAt}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CATEGORY.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="categoryNm != null and categoryNm != ''">
+           AND CATEGORY.CATEGORY_NM LIKE CONCAT('%',#{categoryNm},'%')
+        </if>
+    </select>
+
+    <select id="list" parameterType="CgCategoryParam" resultType="CgCategoryList">
+        /* cgCategory.page */
+        SELECT CATEGORY.UID
+              ,CATEGORY.CATEGORY_CD
+              ,CATEGORY.CATEGORY_NM
+              ,CATEGORY.CATEGORY_TP
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN '지출 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                     END AS CATEGORY_TP_NM
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN false
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN false
+                     END AS CATEGORY_TP_IS_ADD
+              ,CATEGORY.USE_AT
+              ,CATEGORY.REG_UID
+              ,TO_CHAR(CATEGORY.REG_DT, 'YYYY-MM-DD') AS REG_DT
+              ,USER_REG.USER_NM AS REG_NM
+              ,CATEGORY.UPDT_UID
+              ,TO_CHAR(CATEGORY.UPDT_DT, 'YYYY-MM-DD') AS UPDT_DT
+              ,USER_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_CATEGORY CATEGORY
+          LEFT JOIN CASH_GUARD.CG_USER USER_REG ON USER_REG.UID = CATEGORY.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER USER_UPDT ON USER_UPDT.UID = CATEGORY.UPDT_UID
+         WHERE 1 = 1
+        <if test="useAt != null and useAt != ''">
+           AND CATEGORY.USE_AT = #{useAt}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CATEGORY.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="categoryNm != null and categoryNm != ''">
+           AND CATEGORY.CATEGORY_NM LIKE CONCAT('%',#{categoryNm},'%')
+        </if>
+         ORDER BY CATEGORY.REG_DT DESC
+    </select>
+</mapper>

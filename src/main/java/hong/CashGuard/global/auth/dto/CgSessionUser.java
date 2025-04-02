@@ -1,6 +1,7 @@
 package hong.CashGuard.global.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import hong.CashGuard.domain.code.UserRole;
 import hong.CashGuard.domain.user.dto.response.CgUserView;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -39,6 +40,7 @@ public class CgSessionUser implements Serializable {
     private Integer pwdFailCnt;
     private String isLocked;
     private String role;
+    private String roleNm;
 
     public CgSessionUser(CgUserView user) {
         this.uid = user.getUid();
@@ -54,5 +56,6 @@ public class CgSessionUser implements Serializable {
         this.pwdFailCnt = user.getPwdFailCnt();
         this.isLocked = user.getIsLocked();
         this.role = user.getRole();
+        this.roleNm = UserRole.getRoleNm(user.getRole());
     }
 }
