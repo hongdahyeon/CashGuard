@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.group.domain.member.CgGroupMemberMapper">
+
+    <insert id="insert" parameterType="CgGroupMember">
+        /* cgGroupMember.insert */
+        INSERT INTO CASH_GUARD.CG_GROUP_MEMBER (
+              USER_UID
+             ,GROUP_UID
+             ,JOIN_TYPE
+             ,JOIN_DT
+             ,IS_APPROVED
+        ) VALUES (
+              #{userUid}
+             ,#{groupUid}
+             ,#{joinType}
+             ,NOW()
+             ,#{isApproved}
+        )
+    </insert>
+
+    <update id="approveMember" parameterType="CgGroupMember">
+        /* cgGroupMember.approveMember */
+        UPDATE CASH_GUARD.CG_GROUP_MEMBER
+           SET IS_APPROVED = #{isApproved}
+              ,APPROVED_DT = NOW()
+         WHERE USER_UID = #{userUid}
+           AND GROUP_UID = #{groupUid}
+    </update>
+
+    <select id="getAllGroupMember" parameterType="Long" resultType="CgGroupMemberList">
+        /* cgGroup.getAllGroupMember */
+        SELECT CU.UID AS USER_UID
+              ,CU.USER_ID AS USER_ID
+              ,CU.USER_NM AS USER_NM
+              ,CU.USER_TEL AS USER_TEL
+              ,CU.USER_EMAIL AS USER_EMAIL
+              ,CGM.JOIN_DT AS JOIN_DT
+              ,CGM.IS_APPROVED AS IS_APPROVED
+              ,CGM.APPROVED_DT AS APPROVED_DT
+              ,CGM.JOIN_TYPE
+              ,CASE WHEN CGM.JOIN_TYPE = 'APPLY' THEN '신청'
+                    WHEN CGM.JOIN_TYPE = 'INVITE' THEN '초대'
+                END AS JOIN_TYPE_NM
+          FROM CASH_GUARD.CG_GROUP CGG
+          LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGG.UID
+         INNER JOIN CASH_GUARD.CG_USER CU ON CU.UID = CGM.USER_UID
+         WHERE CGG.UID = #{groupUid}
+    </select>
+
+</mapper>

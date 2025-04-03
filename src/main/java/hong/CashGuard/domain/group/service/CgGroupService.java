@@ -5,16 +5,20 @@ import hong.CashGuard.domain.emaillog.dto.request.EmailLogSave;
 import hong.CashGuard.domain.emaillog.service.CgEmailLogService;
 import hong.CashGuard.domain.group.domain.CgGroup;
 import hong.CashGuard.domain.group.domain.CgGroupMapper;
+import hong.CashGuard.domain.group.domain.category.CgGroupCategory;
+import hong.CashGuard.domain.group.domain.category.CgGroupCategoryMapper;
 import hong.CashGuard.domain.group.domain.member.CgGroupMember;
+import hong.CashGuard.domain.group.domain.member.CgGroupMemberMapper;
 import hong.CashGuard.domain.group.dto.request.CgGroupChange;
 import hong.CashGuard.domain.group.dto.request.CgGroupInvite;
 import hong.CashGuard.domain.group.dto.request.CgGroupParam;
 import hong.CashGuard.domain.group.dto.request.CgGroupSave;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberApprove;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberSave;
-import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberList;
+import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberAndCategoryList;
 import hong.CashGuard.domain.group.dto.response.CgGroupList;
-import hong.CashGuard.domain.group.dto.response.CgGroupMemberList;
+import hong.CashGuard.domain.group.dto.response.category.CgGroupCategoryList;
+import hong.CashGuard.domain.group.dto.response.member.CgGroupMemberList;
 import hong.CashGuard.domain.user.service.CgUserService;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
@@ -41,6 +45,8 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-03        work       * 그룹 하위 그룹멤버, 카테고리 로직 분리
+ *                              * 그룹 생성/수정 시점에 카테고리 정보도 함께 추가/삭제
  */
 
 @Service
@@ -48,6 +54,8 @@ import java.util.Map;
 public class CgGroupService {
 
     private final CgGroupMapper mapper;
+    private final CgGroupMemberMapper memberMapper;
+    private final CgGroupCategoryMapper groupCategoryMapper;
     private final CgEmailLogService emailLogService;
     private final CgUserService userService;
 
@@ -63,7 +71,12 @@ public class CgGroupService {
     @Transactional
     public void saveGroup(CgGroupSave request) {
         Long loginUserUid = UserUtil.getLoginUserUid();
-        mapper.insert(new CgGroup(loginUserUid, request));
+        CgGroup insertGroup = new CgGroup(loginUserUid, request);
+        mapper.insert(insertGroup);
+        Long groupUid = insertGroup.getUid();
+        for(Long categoryUid : request.getUids()) {
+            groupCategoryMapper.insert(new CgGroupCategory(groupUid, categoryUid));
+        }
     }
 
     /**
@@ -76,6 +89,10 @@ public class CgGroupService {
     public void changeGroup(Long uid, CgGroupChange request) {
         CgGroup myView = mapper.view(uid);
         mapper.update(myView.changeGroup(uid, request));
+        groupCategoryMapper.delete(uid);
+        for(Long categoryUid : request.getUids()) {
+            groupCategoryMapper.insert(new CgGroupCategory(uid, categoryUid));
+        }
     }
 
     /**
@@ -110,7 +127,7 @@ public class CgGroupService {
     **/
     @Transactional(readOnly = true)
     public List<CgGroupMemberList> findGroupMember(Long groupUid) {
-        return mapper.getAllGroupMember(groupUid);
+        return memberMapper.getAllGroupMember(groupUid);
     }
 
     /**
@@ -121,7 +138,7 @@ public class CgGroupService {
     **/
     @Transactional
     public void saveGroupMember(CgGroupMemberSave request) {
-        mapper.insertMember(new CgGroupMember(request));
+        memberMapper.insert(new CgGroupMember(request));
     }
 
     /**
@@ -150,7 +167,7 @@ public class CgGroupService {
     @Transactional
     public void approveGroupMember(CgGroupMemberApprove request) {
         for( Long userUid : request.getUids() ) {
-            mapper.approveMember(new CgGroupMember(userUid, request.getGroupUid(), "Y"));
+            memberMapper.approveMember(new CgGroupMember(userUid, request.getGroupUid(), "Y"));
         }
     }
 
@@ -160,13 +177,15 @@ public class CgGroupService {
      * @date        2025-04-02
      * @deacription 로그인 사용자의 그룹 목록 정보 조회 (with. 하위 사용자 목록 정보)
     **/
-    public List<CgGroupAndMemberList> findLoginUsersGroup() {
+    public List<CgGroupAndMemberAndCategoryList> findLoginUsersGroup() {
         Long loginUserUid = UserUtil.getLoginUserUid();
-        List<CgGroupAndMemberList> loginUsersGroup = mapper.getLoginUsersGroup(loginUserUid);
+        List<CgGroupAndMemberAndCategoryList> loginUsersGroup = mapper.getLoginUsersGroup(loginUserUid);
         if( loginUsersGroup != null && !loginUsersGroup.isEmpty() ) {
-            for( CgGroupAndMemberList dto : loginUsersGroup ) {
-                List<CgGroupMemberList> memberList = mapper.getAllGroupMember(dto.getUid());
+            for( CgGroupAndMemberAndCategoryList dto : loginUsersGroup ) {
+                List<CgGroupMemberList> memberList = memberMapper.getAllGroupMember(dto.getUid());
+                List<CgGroupCategoryList> categoryList = groupCategoryMapper.getAllGroupCategory(dto.getUid());
                 dto.setMembers(memberList);
+                dto.setCategories(categoryList);
             }
         }
         return loginUsersGroup;
@@ -286,7 +305,7 @@ public class CgGroupService {
     **/
     @Transactional
     public void saveInviteMember(Long userUid, Long groupUid) {
-        mapper.insertMember(new CgGroupMember(userUid, groupUid));
-        mapper.approveMember(new CgGroupMember(userUid, groupUid, "Y"));
+        memberMapper.insert(new CgGroupMember(userUid, groupUid));
+        memberMapper.approveMember(new CgGroupMember(userUid, groupUid, "Y"));
     }
 }

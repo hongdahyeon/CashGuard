@@ -6,9 +6,9 @@ import hong.CashGuard.domain.group.dto.request.CgGroupParam;
 import hong.CashGuard.domain.group.dto.request.CgGroupSave;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberApprove;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberSave;
-import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberList;
+import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberAndCategoryList;
 import hong.CashGuard.domain.group.dto.response.CgGroupList;
-import hong.CashGuard.domain.group.dto.response.CgGroupMemberList;
+import hong.CashGuard.domain.group.dto.response.member.CgGroupMemberList;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import hong.CashGuard.global.bean.error.ErrorResponse;
@@ -30,6 +30,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-03        work       응답 dto 파일명 변경 (CgGroupAndMemberList -> CgGroupAndMemberAndCategoryList)
  */
 
 @RestController
@@ -150,6 +151,7 @@ public class CgGroupRestController {
     /**
      *
      * 현재 로그인한 사용자의 그룹 정보 조회
+     * > 그룹 하위 멤버 및 카테고리 목록 함께 조회
      *
      * @api         [GET] /cguard/api/group/exponent
      * @author      work
@@ -157,7 +159,7 @@ public class CgGroupRestController {
     **/
     @GetMapping("/exponent")
     public ResponseEntity findLoginUsersGroup() {
-        List<CgGroupAndMemberList> loginUsersGroup = service.findLoginUsersGroup();
+        List<CgGroupAndMemberAndCategoryList> loginUsersGroup = service.findLoginUsersGroup();
         return ResponseEntity.ok(loginUsersGroup);
     }
 

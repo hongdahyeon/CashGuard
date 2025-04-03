@@ -87,7 +87,7 @@
         <if test="categoryNm != null and categoryNm != ''">
            AND CATEGORY.CATEGORY_NM LIKE CONCAT('%',#{categoryNm},'%')
         </if>
-         ORDER BY CATEGORY.REG_DT DESC
+         ORDER BY CATEGORY.CATEGORY_TP DESC, CATEGORY.CATEGORY_CD DESC
         <if test="startNumber != null and endNumber != null">
          LIMIT #{endNumber} OFFSET #{startNumber}
         </if>
@@ -145,6 +145,6 @@
         <if test="categoryNm != null and categoryNm != ''">
            AND CATEGORY.CATEGORY_NM LIKE CONCAT('%',#{categoryNm},'%')
         </if>
-         ORDER BY CATEGORY.REG_DT DESC
+         ORDER BY CATEGORY.CATEGORY_TP DESC, CATEGORY.CATEGORY_CD DESC
     </select>
 </mapper>

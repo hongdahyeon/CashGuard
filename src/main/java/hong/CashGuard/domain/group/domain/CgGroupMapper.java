@@ -1,8 +1,6 @@
 package hong.CashGuard.domain.group.domain;
 
-import hong.CashGuard.domain.group.domain.member.CgGroupMember;
-import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberList;
-import hong.CashGuard.domain.group.dto.response.CgGroupMemberList;
+import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberAndCategoryList;
 import hong.CashGuard.global.bean.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -19,18 +17,13 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-03        work       member 관련 부분 분리
  */
 
 @Mapper
 public interface CgGroupMapper extends BaseMapper<CgGroup> {
 
-    List<CgGroupMemberList> getAllGroupMember(Long groupUid);
-
-    int insertMember(CgGroupMember bean);
-
-    int approveMember(CgGroupMember bean);
-
     int checkIfExist(Map<String, Object> params);
 
-    List<CgGroupAndMemberList> getLoginUsersGroup(Long userUid);
+    List<CgGroupAndMemberAndCategoryList> getLoginUsersGroup(Long userUid);
 }

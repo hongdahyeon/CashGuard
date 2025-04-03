@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.ledger.domain.CgLedgerMapper">
+
+    <insert id="insert" parameterType="CgLedger">
+        /* cgLedger.insert */
+        INSERT INTO CASH_GUARD.CG_LEDGER (
+             USER_UID
+            ,USE_AT
+            ,DELETE_AT
+            ,LEDGER_NM
+            ,LEDGER_NOTE
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{userUid}
+            ,#{useAt}
+            ,'N'
+            ,#{ledgerNm}
+            ,#{ledgerNote}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+
+    <select id="view" parameterType="Long" resultType="CgLedger">
+        /* cgLedger.view */
+        SELECT UID
+              ,USER_UID
+              ,LEDGER_NM
+              ,LEDGER_NOTE
+              ,USE_AT
+              ,DELETE_AT
+          FROM CASH_GUARD.CG_LEDGER
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgLedger">
+        /* cgLedger.update */
+        UPDATE CASH_GUARD.CG_LEDGER
+           SET LEDGER_NM = #{ledgerNm}
+              ,LEDGER_NOTE = #{ledgerNote}
+              ,USE_AT = #{useAt}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <delete id="delete" parameterType="CgLedger">
+        /* cgLedger.delete */
+        UPDATE CASH_GUARD.CG_LEDGER
+           SET DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </delete>
+
+    <select id="page" parameterType="CgLedgerParam" resultType="CgLedgerList">
+        /* cgLedger.page */
+        SELECT CL.UID
+              ,CL.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CL.LEDGER_NM
+              ,CL.LEDGER_NOTE
+              ,CL.USE_AT
+              ,CL.DELETE_AT
+              ,CL.REG_UID
+              ,CL.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+          FROM CASH_GUARD.CG_LEDGER CL
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+         WHERE 1 = 1
+           AND CL.DELETE_AT = 'N'
+        <if test="useAt != null and useAt != ''">
+           AND CL.USE_AT = #{useAt}
+        </if>
+        <if test="ledgerNm != null and ledgerNm != ''">
+           AND CL.LEDGER_NM = #{ledgerNm}
+        </if>
+        <if test="userUid != null and userUid != ''">
+           AND CL.USER_UID = #{userUid}
+        </if>
+         ORDER BY CL.REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="count" resultType="int" parameterType="CgLedgerParam">
+        /* cgLedger.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_LEDGER CL
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+         WHERE 1 = 1
+        AND CL.DELETE_AT = 'N'
+        <if test="useAt != null and useAt != ''">
+           AND CL.USE_AT = #{useAt}
+        </if>
+        <if test="ledgerNm != null and ledgerNm != ''">
+           AND CL.LEDGER_NM = #{ledgerNm}
+        </if>
+        <if test="userUid != null and userUid != ''">
+           AND CL.USER_UID = #{userUid}
+        </if>
+    </select>
+
+    <select id="list" parameterType="CgLedgerParam" resultType="CgLedgerList">
+        /* cgLedger.list */
+        SELECT CL.UID
+              ,CL.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CL.LEDGER_NM
+              ,CL.LEDGER_NOTE
+              ,CL.USE_AT
+              ,CL.DELETE_AT
+              ,CL.REG_UID
+              ,CL.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+          FROM CASH_GUARD.CG_LEDGER CL
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+         WHERE 1 = 1
+           AND CL.DELETE_AT = 'N'
+        <if test="useAt != null and useAt != ''">
+           AND CL.USE_AT = #{useAt}
+        </if>
+        <if test="ledgerNm != null and ledgerNm != ''">
+           AND CL.LEDGER_NM = #{ledgerNm}
+        </if>
+        <if test="userUid != null and userUid != ''">
+           AND CL.USER_UID = #{userUid}
+        </if>
+        ORDER BY CL.REG_DT DESC
+    </select>
+</mapper>

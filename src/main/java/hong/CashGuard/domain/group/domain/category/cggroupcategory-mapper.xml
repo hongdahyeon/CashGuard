@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.group.domain.category.CgGroupCategoryMapper">
+
+    <insert id="insert" parameterType="CgGroupCategory">
+        /* cgGroupCategory.insert */
+        INSERT INTO CASH_GUARD.CG_GROUP_CATEGORY (
+             GROUP_UID
+            ,CATEGORY_UID
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{groupUid}
+            ,#{categoryUid}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        /* cgGroupCategory.delete */
+        DELETE FROM CASH_GUARD.CG_GROUP_CATEGORY
+         WHERE GROUP_UID = #{groupUid}
+    </delete>
+
+    <select id="getAllGroupCategory" parameterType="CgGroupCategoryList">
+        /* cgGroupCategory.getAllGroupCategory */
+        SELECT CATEGORY.UID AS CATEGORY_UID
+              ,CATEGORY.CATEGORY_CD
+              ,CATEGORY.CATEGORY_NM
+              ,CATEGORY.CATEGORY_TP
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN '지출 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                END AS CATEGORY_TP_NM
+              ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN false
+                    WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN false
+                END AS CATEGORY_TP_IS_ADD
+          FROM CASH_GUARD.CG_GROUP_CATEGORY CGG
+         INNER JOIN CASH_GUARD.CG_CATEGORY CATEGORY ON CATEGORY.UID = CGG.CATEGORY_UID
+         WHERE CGG.GROUP_UID = #{groupUid}
+    </select>
+
+</mapper>

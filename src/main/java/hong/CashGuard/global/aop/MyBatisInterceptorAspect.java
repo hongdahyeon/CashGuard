@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
  * 2025-03-28        work       최초 생성
  * 2025-04-01        work       * insert, update 시점에 접근 안하는 오류 해결
  *                              => 경로 변경해줌
+ * 2025-04-03        work       delete 추가
  */
 
 @Slf4j
@@ -34,6 +35,7 @@ public class MyBatisInterceptorAspect {
     @Around( "execution(* hong.CashGuard.domain..domain.*Mapper.*insert*(..)) || " +
              "execution(* hong.CashGuard.domain..domain.*Mapper.*update*(..)) || "+
              "execution(* hong.CashGuard.global.bean.BaseMapper.*insert*(..)) || " +
+             "execution(* hong.CashGuard.global.bean.BaseMapper.*delete*(..)) || " +
              "execution(* hong.CashGuard.global.bean.BaseMapper.*update*(..))"
     )
     public Object beforeInsertOrUpdate(ProceedingJoinPoint joinPoint) throws Throwable {

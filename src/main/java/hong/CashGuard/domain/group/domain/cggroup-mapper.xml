@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="hong.CashGuard.domain.group.domain.CgGroupMapper">
 
-    <insert id="insert" parameterType="CgGroup">
+    <insert id="insert" parameterType="CgGroup" useGeneratedKeys="true" keyProperty="uid">
         /* cgGroup.insert */
         INSERT INTO CASH_GUARD.CG_GROUP (
              USER_UID
@@ -130,52 +130,6 @@
          ORDER BY CGGROUP.REG_DT DESC
     </select>
 
-    <select id="getAllGroupMember" parameterType="Long" resultType="CgGroupMemberList">
-        /* cgGroup.getAllGroupMember */
-        SELECT CU.UID AS USER_UID
-              ,CU.USER_ID AS USER_ID
-              ,CU.USER_NM AS USER_NM
-              ,CU.USER_TEL AS USER_TEL
-              ,CU.USER_EMAIL AS USER_EMAIL
-              ,CGM.JOIN_DT AS JOIN_DT
-              ,CGM.IS_APPROVED AS IS_APPROVED
-              ,CGM.APPROVED_DT AS APPROVED_DT
-              ,CGM.JOIN_TYPE
-              ,CASE WHEN CGM.JOIN_TYPE = 'APPLY' THEN '신청'
-                    WHEN CGM.JOIN_TYPE = 'INVITE' THEN '초대'
-                     END AS JOIN_TYPE_NM
-          FROM CASH_GUARD.CG_GROUP CGG
-          LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGG.UID
-         INNER JOIN CASH_GUARD.CG_USER CU ON CU.UID = CGM.USER_UID
-         WHERE CGG.UID = #{groupUid}
-    </select>
-
-    <insert id="insertMember" parameterType="CgGroupMember">
-        /* cgGroup.insertMember */
-        INSERT INTO CASH_GUARD.CG_GROUP_MEMBER (
-             USER_UID
-            ,GROUP_UID
-            ,JOIN_TYPE
-            ,JOIN_DT
-            ,IS_APPROVED
-        ) VALUES (
-             #{userUid}
-            ,#{groupUid}
-            ,#{joinType}
-            ,NOW()
-            ,#{isApproved}
-        )
-    </insert>
-
-    <update id="approveMember" parameterType="CgGroupMember">
-        /* cgGroup.CgGroupMember */
-        UPDATE CASH_GUARD.CG_GROUP_MEMBER
-           SET IS_APPROVED = #{isApproved}
-              ,APPROVED_DT = NOW()
-         WHERE USER_UID = #{userUid}
-           AND GROUP_UID = #{groupUid}
-    </update>
-
     <select id="checkIfExist" parameterType="map" resultType="int">
         /* cgGroup.checkIfExist */
         SELECT COUNT(*)
@@ -184,7 +138,7 @@
            AND GROUP_UID = #{groupUid}
     </select>
 
-    <select id="getLoginUsersGroup" resultType="CgGroupAndMemberList" parameterType="Long">
+    <select id="getLoginUsersGroup" resultType="CgGroupAndMemberAndCategoryList" parameterType="Long">
         /* cgGroup.getLoginUsersGroup */
         SELECT CGGROUP.UID
               ,CGGROUP.USER_UID
@@ -195,9 +149,17 @@
                  FROM CASH_GUARD.CG_GROUP_MEMBER CM
                  WHERE CM.GROUP_UID = CGGROUP.UID
                    AND CM.IS_APPROVED = 'Y' ) AS APPROVED_MEMBER
+              ,CASE
+                  WHEN ( SELECT COUNT(*)
+                           FROM CASH_GUARD.CG_GROUP_MEMBER CM2
+                          WHERE CM2.GROUP_UID = CGGROUP.UID
+                            AND CM2.IS_APPROVED = 'Y' ) >= 2
+                  THEN true
+                  ELSE false
+                END AS IS_ACTIVE
               ,( SELECT COUNT(*)
-                 FROM CASH_GUARD.CG_GROUP_MEMBER CM2
-                 WHERE CM2.GROUP_UID = CGGROUP.UID ) AS TOTAL_MEMBER
+                 FROM CASH_GUARD.CG_GROUP_MEMBER CM3
+                 WHERE CM3.GROUP_UID = CGGROUP.UID ) AS TOTAL_MEMBER
               ,CGGROUP.REG_UID
               ,CGGROUP.REG_DT AS REG_DT
               ,CU_REG.USER_NM AS REG_NM
