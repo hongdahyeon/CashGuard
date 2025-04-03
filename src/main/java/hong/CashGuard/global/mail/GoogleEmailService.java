@@ -34,7 +34,6 @@ public class GoogleEmailService {
     public void sendMail(String to, String fromEmail, String fromName, String subject, String content) {
         MimeMessage message = javaMailSender.createMimeMessage();
         try{
-            // TODO 메일 발송 구현
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
             /*
@@ -47,6 +46,7 @@ public class GoogleEmailService {
             * 사용자가 해당 이메일에 [답장]을 하게 되면 전송되는 이메일 주소
             */
             helper.setReplyTo(fromEmail);
+
             helper.setTo(to);
             helper.setSubject(subject);
             helper.setText(content, true);

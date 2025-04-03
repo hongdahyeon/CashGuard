@@ -52,4 +52,17 @@ public class CgGroupMember {
         this.groupUid = groupUid;
         this.isApproved = isApproved;
     }
+
+    /**
+     * @method      CgGroupMember 생성자 3
+     * @author      work
+     * @date        2025-04-03
+     * @deacription 초대받은 사용자 추가하기
+    **/
+    public CgGroupMember(Long userUid, Long groupUid) {
+        this.userUid = userUid;
+        this.groupUid = groupUid;
+        this.joinType = GroupJoinType.INVITE.name();;
+        this.isApproved = "Y";
+    }
 }

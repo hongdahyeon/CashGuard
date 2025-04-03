@@ -98,4 +98,19 @@ public class CgUser extends AuditBean {
         this.uid = uid;
         this.isEnable = isEnable;
     }
+
+    /**
+     * @method      CgUser 생성자 6
+     * @author      work
+     * @date        2025-04-03
+     * @deacription 그룹 초대를 위한 임시 생성자 추가
+    **/
+    public CgUser(String name, String email, String encodePassword, String role) {
+        this.userId = email;
+        this.password = encodePassword;
+        this.userNm = name;
+        this.userTel = null;
+        this.userEmail = email;
+        this.role = role;
+    }
 }

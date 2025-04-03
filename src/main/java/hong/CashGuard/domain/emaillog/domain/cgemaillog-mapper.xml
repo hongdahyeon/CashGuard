@@ -25,4 +25,35 @@
         )
     </insert>
 
+    <select id="isInvalidToken" resultType="boolean" parameterType="String">
+        /* cgEmailLog.isInvalidToken */
+        SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
+          FROM CASH_GUARD.CG_EMAIL_LOG
+         WHERE EMAIL_TOKEN = #{emailToken}
+           AND IS_READ = 'N'
+    </select>
+
+    <select id="view" parameterType="String" resultType="CgEmailLog">
+        /* cgEmailLog.view */
+        SELECT UID
+              ,EMAIL_TOKEN
+              ,RECIPIENT_EMAIL
+              ,SENDER_EMAIL
+              ,SUBJECT
+              ,CONTENT
+              ,REASON_CODE
+              ,SENT_DT
+              ,IS_READ
+              ,READ_DT
+          FROM CASH_GUARD.CG_EMAIL_LOG
+         WHERE EMAIL_TOKEN = #{emailToken}
+    </select>
+
+    <update id="updateTokenIsRead" parameterType="String">
+        /* cgEmailLog.updateTokenIsRead */
+        UPDATE CASH_GUARD.CG_EMAIL_LOG
+           SET IS_READ = 'Y'
+              ,READ_DT = NOW()
+         WHERE EMAIL_TOKEN = #{emailToken}
+    </update>
 </mapper>

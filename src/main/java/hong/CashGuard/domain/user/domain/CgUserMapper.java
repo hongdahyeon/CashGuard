@@ -34,4 +34,8 @@ public interface CgUserMapper extends BaseMapper<CgUser> {
     int updateUserToUnLock(CgUser bean);
 
     int updateUserIsEnable(CgUser bean);
+
+    boolean checkIfAuthUser(String email);
+
+    CgUserView findUserByUserEmail(String email);
 }

@@ -21,6 +21,25 @@
          WHERE USER_ID = #{userId}
     </select>
 
+    <select id="findUserByUserEmail" parameterType="String" resultType="CgUserView">
+        /* cgUser.findUserByUserEmail */
+        SELECT UID
+              ,USER_ID
+              ,PASSWORD
+              ,USER_NM
+              ,USER_TEL
+              ,USER_EMAIL
+              ,LAST_CONN_DT
+              ,LAST_PASSWD_CHNG_DT
+              ,PROFILE_UID
+              ,IS_ENABLE
+              ,PWD_FAIL_CNT
+              ,IS_LOCKED
+              ,ROLE
+          FROM CASH_GUARD.CG_USER
+         WHERE USER_EMAIL = #{userEmail}
+    </select>
+
     <update id="updateLastLoginDtAndPwdFailCnt" parameterType="String">
         /* cgUser.updateLastLoginDtAndPwdFailCnt */
         UPDATE CASH_GUARD.CG_USER
@@ -200,4 +219,11 @@
               ,UPDT_DT = NOW()
          WHERE UID = #{uid}
     </update>
+
+    <select id="checkIfAuthUser" parameterType="String" resultType="boolean">
+        /* cgUser.checkIfAuthUser */
+        SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
+          FROM CASH_GUARD.CG_USER
+         WHERE USER_EMAIL = #{userEmail}
+    </select>
 </mapper>

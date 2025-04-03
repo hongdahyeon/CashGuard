@@ -1,20 +1,27 @@
 spring:
   datasource:
     url: jdbc:mariadb://localhost:3306/cash_guard
-    username: hong  # 데이터베이스 사용자명
-    password: '0427'  # 데이터베이스 비밀번호
+    username: hong
+    password: ENC(D6E0WB3yvMBlKkMLxTNjjl6yDIuLFPpp4P/+UbtbcnzxtyWyxfdbzoJF2xZnsN9g)
     driver-class-name: org.mariadb.jdbc.Driver
     allow-multi-query: true
 
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: ''
-#    password: ''
-#    properties:
-#      mail:
-#        debug: true
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: 'cashguard24@gmail.com'
+    password: ENC(C/KJD1s0a5HvJUIuI8g57QTsrv7HjN5vcDvXUTXCaCqkXnMtmfFKtinuiNt6nHRvNtc/HRjfKmUji+6H1DamPg==)
+    properties:
+      mail:
+        debug: true
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+hong:
+  base-url: 'http://localhost:8084'
+
+jasypt:
+  encryptor:
+    bean: cashGuardEncryptor

@@ -1,18 +1,12 @@
-package hong.CashGuard.domain;
+package hong.CashGuard.domain.home.web;
 
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
- * packageName    : hong.CashGuard.domain
+ * packageName    : hong.CashGuard.domain.home.web
  * fileName       : HomeController
  * author         : work
  * date           : 2025-03-27
@@ -21,6 +15,7 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-03        work       패키지 이동
  */
 
 @Controller

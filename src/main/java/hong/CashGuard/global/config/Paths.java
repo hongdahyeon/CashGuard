@@ -14,6 +14,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
  * 2025-04-01        work       PUBLIC_API 추가 ( 해당 부분은 Method & API 값이 동일해야 접근 가능 )
+ * 2025-04-03        work       로그인 이전에 접근 가능한 API 추가 : /api/invite-link/**
  */
 public class Paths {
 
@@ -23,6 +24,7 @@ public class Paths {
 
     public static final AntPathRequestMatcher[] BEFORE_LOGIN = new  AntPathRequestMatcher[]{
              new AntPathRequestMatcher("/login")
+            ,new AntPathRequestMatcher("/api/invite-link/**")
             ,new AntPathRequestMatcher("/csrf")
             ,new AntPathRequestMatcher("/assets/**")
             ,new AntPathRequestMatcher("/login/force.json")

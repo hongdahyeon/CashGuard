@@ -12,6 +12,7 @@ import lombok.Getter;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-03        work       {reason} 값이 valid 한 값인지 체크 메소드 추가
  */
 
 @Getter
@@ -23,5 +24,14 @@ public enum EmailSendReason {
 
     EmailSendReason(String description) {
         this.description = description;
+    }
+
+    public static boolean isValidReason(String reason) {
+        for( EmailSendReason sendReason : EmailSendReason.values() ) {
+            if(sendReason.name().equals(reason)) {
+                return true;
+            }
+        }
+        return  false;
     }
 }

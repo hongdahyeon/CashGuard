@@ -1,5 +1,6 @@
 package hong.CashGuard.domain.user.service;
 
+import hong.CashGuard.domain.code.UserRole;
 import hong.CashGuard.domain.user.domain.CgUser;
 import hong.CashGuard.domain.user.domain.CgUserMapper;
 import hong.CashGuard.domain.user.dto.request.CgUserChange;
@@ -7,6 +8,7 @@ import hong.CashGuard.domain.user.dto.request.CgUserParam;
 import hong.CashGuard.domain.user.dto.request.CgUserPassword;
 import hong.CashGuard.domain.user.dto.request.CgUserSave;
 import hong.CashGuard.domain.user.dto.response.CgUserList;
+import hong.CashGuard.domain.user.dto.response.CgUserView;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import hong.CashGuard.global.exception.CGException;
@@ -133,6 +135,40 @@ public class CgUserService {
     public void enableDisableUser(Long uid, boolean enable) {
         String isEnable = (enable) ? "Y" : "N";
         mapper.updateUserIsEnable(new CgUser(uid, isEnable));
+    }
+
+    /**
+     * @method      ifAuthUser
+     * @author      work
+     * @date        2025-04-03
+     * @deacription {email} 값을 통해 이미 회원가입된 유저인지 체크
+    **/
+    @Transactional(readOnly = true)
+    public boolean ifAuthUser(String email) {
+        return mapper.checkIfAuthUser(email);
+    }
+
+    /**
+     * @method      insertTempUser
+     * @author      work
+     * @date        2025-04-03
+     * @deacription 그룹 초대를 위한 임시 사용자 추가
+    **/
+    @Transactional
+    public void insertTempUser(String name, String email, String password) {
+        String encodePassword = passwordEncoder.encode(password);
+        mapper.insert(new CgUser(name, email, encodePassword, UserRole.ROLE_USER.name()));
+    }
+
+    /**
+     * @method      findUserByEmail
+     * @author      work
+     * @date        2025-04-03
+     * @deacription {email} 값을 통해 유저 정보 조회
+    **/
+    @Transactional(readOnly = true)
+    public CgUserView findUserByEmail(String email) {
+        return mapper.findUserByUserEmail(email);
     }
 
 }

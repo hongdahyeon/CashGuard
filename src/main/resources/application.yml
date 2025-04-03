@@ -21,3 +21,5 @@ hong:
   mybatis-setting:
     mapper-locations: file:src/main/java/hong/CashGuard/**/*.xml
     type-aliases-package: hong.CashGuard.**
+  aes:
+    secret-key: ENC(Xp88kHq5qRAaQjscukqzatp74s2nqHVOYfDZcapTltryEa6QIhUAJygFOa5UwWy9U2mIM/Hwc3cpfqDLr7510E4hMub/0IpMXhltEV1nSL8=)

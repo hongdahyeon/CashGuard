@@ -2,15 +2,12 @@ package hong.CashGuard.global.auth;
 
 import hong.CashGuard.domain.user.dto.response.CgUserView;
 import hong.CashGuard.domain.user.service.CgSecurityUserService;
-import hong.CashGuard.domain.user.service.CgUserService;
 import hong.CashGuard.global.auth.dto.CgSessionUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * packageName    : hong.CashGuard.global.auth

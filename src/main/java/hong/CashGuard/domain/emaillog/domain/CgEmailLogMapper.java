@@ -17,4 +17,8 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface CgEmailLogMapper extends BaseMapper<CgEmailLog> {
+
+    boolean isInvalidToken(String token);
+
+    int updateTokenIsRead(String token);
 }

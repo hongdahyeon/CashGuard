@@ -10,4 +10,11 @@
 <body>
 
 </body>
+<script>
+    const params = new URLSearchParams(location.search);
+    if(params.has("invitesuccess")) {
+        alert("초대가 성공적으로 되었습니다.")
+        history.replaceState({}, null, "/")
+    }
+</script>
 </html>

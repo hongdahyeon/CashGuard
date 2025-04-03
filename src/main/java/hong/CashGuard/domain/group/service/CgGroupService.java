@@ -15,11 +15,15 @@ import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberSave;
 import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberList;
 import hong.CashGuard.domain.group.dto.response.CgGroupList;
 import hong.CashGuard.domain.group.dto.response.CgGroupMemberList;
+import hong.CashGuard.domain.user.service.CgUserService;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import hong.CashGuard.global.exception.CGException;
+import hong.CashGuard.global.util.AESUtil;
+import hong.CashGuard.global.util.StringUtil;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +49,10 @@ public class CgGroupService {
 
     private final CgGroupMapper mapper;
     private final CgEmailLogService emailLogService;
+    private final CgUserService userService;
+
+    @Value("${hong.base-url}")
+    private String baseUrl;
 
     /**
      * @method      saveGroup
@@ -178,20 +186,31 @@ public class CgGroupService {
             throw new CGException("해당되는 그룹 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // 2. 전송할 이메일 정보 세팅하기
-        // => 제목, 내용, 이메일 전송 이유, 이메일 토큰
-        String groupNm = groupView.getGroupNm();
-        // TODO MAKE EMAIL TOKEN > groupUid, reasonCode
-        String emailToken = "test";
-        String invitationLink = String.format("http://localhost:8084/invite-link/%s", emailToken);
-        String title = this.createMailTitle(groupNm, request.getRecipientNm());
-        String content = this.createMailContent(groupNm, request.getRecipientNm(), invitationLink);
+        // 2. {groupUid, reasonCode} 값을 갖고 이메일 토큰 발급
         String reasonCode = EmailSendReason.INVITE_GROUP.name();
+        String emailToken = AESUtil.encrypt(groupView.getUid(), reasonCode);
+        String invitationLink = String.format("%s/api/invite-link/%s", baseUrl, emailToken);
 
-        // 3. 이메일 전송 및 이메일 전송 로그 저장
+        // 3. {recipientEmail} 값으로 이미 등록된 유저인지 체크
+        String recipientNm = request.getRecipientNm();
+        String recipientEmail = request.getRecipientEmail();
+        boolean ifAuthUser = userService.ifAuthUser(recipientEmail);
+        String content = "";
+        if( !ifAuthUser ) {
+            // 3-1. 임시 회원가입
+            String randomPassword = StringUtil.random(6);
+            userService.insertTempUser(recipientNm, recipientEmail, randomPassword);
+            content = this.createMailContentForNewUser(groupView.getGroupNm(), recipientNm, recipientEmail, invitationLink, randomPassword);
+
+        } else {
+            content = this.createMailContentForExistingUser(groupView.getGroupNm(), recipientNm, recipientEmail, invitationLink);
+        }
+        String title = this.createMailTitle(groupView.getGroupNm(), recipientNm);
+
+        // 4. 이메일 전송 및 이메일 전송 로그 저장
         EmailLogSave emailBuilder = EmailLogSave.saveEmailLog()
                 .emailToken(emailToken)
-                .recipientEmail(request.getRecipientEmail())
+                .recipientEmail(recipientEmail)
                 .subject(title)
                 .content(content)
                 .reasonCode(reasonCode)
@@ -206,29 +225,68 @@ public class CgGroupService {
      * @deacription 그룹 초대 > 이메일 제목 생성
      **/
     private String createMailTitle(String groupNm, String recipientNm) {
-        // TODO : 제목 템플릿 만들기
         return String.format("[Cash Guard] %s님, '%s' 그룹 초대장이 도착했습니다!", recipientNm, groupNm);
     }
 
     /**
-     * @method      createMailContent
+     * @method      createMailContentForNewUser
      * @author      work
      * @date        2025-04-02
-     * @deacription 그룹 초대 > 이메일 내용 생성
+     * @deacription 그룹 초대 > 이메일 내용 생성 (임시 회원가입 유저)
     **/
-    private String createMailContent(String groupNm, String recipientNm, String invitationLink) {
-        // TODO : 내용 템플릿 만들기
+    private String createMailContentForNewUser(String groupNm, String recipientNm, String recipientEmail, String invitationLink, String rawPassword) {
         return """
         <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; text-align: center; padding: 20px;">
             <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 400px; margin: auto;">
                 <h2 style="color: #333;">📩 Cash Guard 초대장</h2>
                 <p><strong>%s</strong>님,</p>
                 <p>당신을 <strong>%s</strong> 그룹으로 초대합니다!</p>
-                <a href="%s" style="display: inline-block; padding: 10px 20px; margin-top: 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">
-                    초대 수락하기
+                <a href="%s" style="display: inline-block; padding: 12px 20px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;">
+                    📝 초대 수락하기 (신규 회원)
+                </a>
+                <p style="font-size: 14px; color: #666; margin-top: 15px;">
+                    🔹 신규 가입 시, 아래 정보로 계정이 자동 생성됩니다.<br>
+                    🔹 <strong>아이디:</strong> %s<br>
+                    🔹 <strong>초기 비밀번호:</strong> %s<br>
+                    🔹 <strong>이메일:</strong> %s<br>
+                    🔹 로그인 후 반드시 비밀번호를 변경해 주세요.
+                </p>
+            </div>
+        </body>
+        """.formatted(recipientNm, groupNm, invitationLink, recipientEmail, rawPassword, recipientEmail);
+    }
+
+
+    /**
+     * @method      createMailContentForExistingUser
+     * @author      work
+     * @date        2025-04-03
+     * @deacription 그룹 초대 > 이메일 내용 생성 (기존 회원가입 유저)
+    **/
+    private String createMailContentForExistingUser(String groupNm, String recipientNm, String recipientEmail, String invitationLink) {
+        return """
+        <body style="font-family: Arial, sans-serif; background-color: #f8f9fa; text-align: center; padding: 20px;">
+            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); max-width: 400px; margin: auto;">
+                <h2 style="color: #333;">📩 Cash Guard 초대장</h2>
+                <p><strong>%s</strong>님,</p>
+                <p>당신을 <strong>%s</strong> 그룹으로 초대합니다!</p>
+                <a href="%s" style="display: inline-block; padding: 12px 20px; font-size: 16px; color: white; background-color: #28a745; text-decoration: none; border-radius: 5px;">
+                    ✅ 초대 수락하기
                 </a>
             </div>
         </body>
         """.formatted(recipientNm, groupNm, invitationLink);
+    }
+
+    /**
+     * @method      saveInviteMember
+     * @author      work
+     * @date        2025-04-03
+     * @deacription 초대한 사용자 그룹에 추가하기
+    **/
+    @Transactional
+    public void saveInviteMember(Long userUid, Long groupUid) {
+        mapper.insertMember(new CgGroupMember(userUid, groupUid));
+        mapper.approveMember(new CgGroupMember(userUid, groupUid, "Y"));
     }
 }
