@@ -1,6 +1,6 @@
 package hong.CashGuard.global.tus;
 
-import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import me.desair.tus.server.TusFileUploadService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +18,7 @@ import java.io.IOException;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-03        work       최초 생성
+ * 2025-04-03        home       로직 구현
  */
 
 @Configuration
@@ -39,7 +40,7 @@ public class TusFileConfig {
      * @deacription 서버 시작 시점에 기존 업로드된 파일 정리
      *              => 미완료된 파일을 정리
     **/
-    @PostConstruct
+    @PreDestroy
     public void exit() throws IOException{
         tus().cleanup();
     }

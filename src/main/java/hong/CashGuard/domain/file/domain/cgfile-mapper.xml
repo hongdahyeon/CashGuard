@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.file.domain.CgFileMapper">
+
+    <select id="generateKey" resultType="Long">
+        /* cgFile.generateKey */
+        SELECT NVL(MAX(UID)+1, 1) AS UID
+          FROM CASH_GUARD.CG_FILE
+    </select>
+
+    <insert id="insert" parameterType="CgFile">
+        /* cgFile.insert */
+        INSERT INTO CASH_GUARD.CG_FILE (
+             UID
+            ,FILE_URL
+            ,FILE_ID
+            ,FILE_NM
+            ,FILE_TYPE
+            ,FILE_SIZE
+            ,EXTENSION
+            ,DOWNLOAD_CNT
+            ,DELETE_AT
+            ,SAVED
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{uid}
+            ,#{fileUrl}
+            ,#{fileId}
+            ,#{fileNm}
+            ,#{fileType}
+            ,#{fileSize}
+            ,#{extension}
+            ,0
+            ,'N'
+            ,#{saved}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+
+    <delete id="delete" parameterType="CgFile">
+        /* cgFile.delete */
+        UPDATE CASH_GUARD.CG_FILE
+           SET SAVED = #{saved}
+              ,DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE FILE_URL = #{fileUrl}
+    </delete>
+
+</mapper>
