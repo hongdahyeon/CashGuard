@@ -49,7 +49,7 @@ public class TusFileRestController {
      *
      * 파일 업로드
      *
-     * @api         [POST, OPTIONS] /cguard/api/tus/upload, /cguard/api/tus/upload/**
+     * @api         [POST, OPTIONS] /cguard/api/tus/files/upload, /cguard/api/tus/files/upload/**
      * @author      work
      * @date        2025-04-03
     **/
@@ -62,7 +62,7 @@ public class TusFileRestController {
      *
      * 업로드 파일 삭제
      *
-     * @api         [DELETE] /cguard/api/tus/upload, /cguard/api/tus/upload/**
+     * @api         [DELETE] /cguard/api/tus/files/upload, /cguard/api/tus/files/upload/**
      * @author      work
      * @date        2025-04-03
     **/
@@ -77,7 +77,7 @@ public class TusFileRestController {
      *
      * 파일 최종 업로드
      *
-     * @api         [HEAD, PATCH] /cguard/api/tus/upload, /cguard/api/tus/upload/**
+     * @api         [HEAD, PATCH] /cguard/api/tus/files/upload, /cguard/api/tus/files/upload/**
      * @author      work
      * @date        2025-04-03
     **/
