@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.comment.domain.CgBoardCommentMapper">
+
+    <insert id="insert" parameterType="CgBoardComment">
+        /* cgBoardComment.insert */
+        INSERT INTO CASH_GUARD.CG_BOARD_COMMENT (
+             BOARD_UID
+            ,UPPER_UID
+            ,CONTENT
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+            ,DELETE_AT
+        ) VALUES (
+             #{boardUid}
+            ,#{upperUid}
+            ,#{content}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+            ,'N'
+        )
+    </insert>
+
+    <update id="update" parameterType="CgBoardComment">
+        /* cgBoardComment.update */
+        UPDATE CASH_GUARD.CG_BOARD_COMMENT
+           SET CONTENT = #{content}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <delete id="delete" parameterType="CgBoardComment">
+        /* cgBoardComment.delete */
+        UPDATE CASH_GUARD.CG_BOARD_COMMENT
+           SET DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </delete>
+
+    <select id="list" parameterType="Long" resultType="CgBoardCommentList">
+        /* cgBoardComment.list */
+        SELECT CBM.UID
+              ,CBM.UPPER_UID
+              ,CBM.CONTENT
+              ,CBM.REG_UID
+              ,CBM.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CBM.UPDT_UID
+              ,CBM.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BOARD_COMMENT CBM
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CBM.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CBM.UPDT_UID
+         WHERE CBM.BOARD_UID = #{boardUid}
+           AND CBM.DELETE_AT = 'N'
+         ORDER BY CBM.UPPER_UID, CBM.REG_DT
+    </select>
+</mapper>
