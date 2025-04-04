@@ -16,12 +16,15 @@ import java.util.List;
  *                              * list, count, page 추가
  * 2025-04-02        work       key 값을 파라미터로 받는 view 추가
  * 2025-04-03        work       delete(T bean) 추가
+ * 2025-04-04        work       <R> List<R> list(Long uid) 추가
  */
 public interface BaseMapper<T> {
 
     <B, R> List<R> page(B param);
 
     <B, R> List<R> list(B param);
+
+    <R> List<R> list(Long uid);
 
     <B> int count(B param);
 

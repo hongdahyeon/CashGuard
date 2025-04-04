@@ -1,7 +1,7 @@
 package hong.CashGuard.global.aop;
 
 import hong.CashGuard.global.auth.PrincipalDetails;
-import hong.CashGuard.global.bean.AuditBean;
+import hong.CashGuard.global.bean.audit.AuditBean;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
  * 2025-04-01        work       * insert, update 시점에 접근 안하는 오류 해결
  *                              => 경로 변경해줌
  * 2025-04-03        work       delete 추가
+ * 2025-04-04        work       {AuditBean} 위치 변경
  */
 
 @Slf4j

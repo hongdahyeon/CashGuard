@@ -2,6 +2,7 @@ package hong.CashGuard.domain.group.dto.response;
 
 import hong.CashGuard.domain.group.dto.response.category.CgGroupCategoryList;
 import hong.CashGuard.domain.group.dto.response.member.CgGroupMemberList;
+import hong.CashGuard.global.bean.audit.AuditMetaData;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,15 +15,18 @@ import java.util.List;
  * fileName       : CgGroupAndMemberAndCategoryList
  * author         : work
  * date           : 2025-04-02
- * description    : 그룹 정보 + 각각의 그룹 하위 사용자 리스트 정보 조회 응답 DTO
+ * description    : 그룹 정보 응답 DTO
+ *                  + 각각의 그룹 하위 사용자 리스트 정보 조회
+ *                  + 각각의 그룹에 대한 활성화 카테고리 목록 조회
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       {regUid, regDt, regNm, updtUid, updtDt, updtNm} => AuditMetaData 으로 빼기
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CgGroupAndMemberAndCategoryList {
+public class CgGroupAndMemberAndCategoryList extends AuditMetaData {
 
     private Long uid;
     private Long userUid;
@@ -32,12 +36,6 @@ public class CgGroupAndMemberAndCategoryList {
     private int approvedMember;
     private int totalMember;
     private boolean isActive;
-    private Long regUid;
-    private String regDt;
-    private String regNm;
-    private Long updtUid;
-    private String updtDt;
-    private String updtNm;
     private List<CgGroupMemberList> members = new ArrayList<>();
     private List<CgGroupCategoryList> categories = new ArrayList<>();
 

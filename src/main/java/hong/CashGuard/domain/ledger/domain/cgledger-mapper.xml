@@ -71,9 +71,13 @@
               ,CL.REG_UID
               ,CL.REG_DT
               ,CU_REG.USER_NM AS REG_NM
+              ,CL.UPDT_UID
+              ,CL.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
           FROM CASH_GUARD.CG_LEDGER CL
          INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CL.UPDT_UID
          WHERE 1 = 1
            AND CL.DELETE_AT = 'N'
         <if test="useAt != null and useAt != ''">
@@ -97,6 +101,7 @@
           FROM CASH_GUARD.CG_LEDGER CL
          INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CL.UPDT_UID
          WHERE 1 = 1
         AND CL.DELETE_AT = 'N'
         <if test="useAt != null and useAt != ''">
@@ -122,9 +127,13 @@
               ,CL.REG_UID
               ,CL.REG_DT
               ,CU_REG.USER_NM AS REG_NM
+              ,CL.UPDT_UID
+              ,CL.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
           FROM CASH_GUARD.CG_LEDGER CL
          INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CL.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CL.UPDT_UID
          WHERE 1 = 1
            AND CL.DELETE_AT = 'N'
         <if test="useAt != null and useAt != ''">

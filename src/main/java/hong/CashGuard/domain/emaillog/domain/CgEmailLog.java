@@ -2,7 +2,7 @@ package hong.CashGuard.domain.emaillog.domain;
 
 import hong.CashGuard.domain.emaillog.dto.request.EmailLogSave;
 import hong.CashGuard.global.auth.dto.CgSessionUser;
-import hong.CashGuard.global.bean.AuditBean;
+import hong.CashGuard.global.bean.audit.AuditBean;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       {AuditBean} 위치 변경
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)

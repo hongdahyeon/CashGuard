@@ -1,5 +1,6 @@
 package hong.CashGuard.domain.category.dto.response;
 
+import hong.CashGuard.global.bean.audit.AuditMetaData;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +15,11 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       {regUid, regDt, regNm, updtUid, updtDt, updtNm} => AuditMetaData 으로 빼기
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CgCategoryList {
+public class CgCategoryList extends AuditMetaData {
 
     private Long uid;
     private String categoryCd;
@@ -26,10 +28,5 @@ public class CgCategoryList {
     private String categoryTpNm;
     private boolean categoryTpIsAdd;
     private String useAt;
-    private Long regUid;
-    private String regDt;
-    private String regNm;
-    private String updtUid;
-    private String updtDt;
-    private String updtNm;
+
 }

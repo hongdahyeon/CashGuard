@@ -2,7 +2,7 @@ package hong.CashGuard.domain.group.domain;
 
 import hong.CashGuard.domain.group.dto.request.CgGroupChange;
 import hong.CashGuard.domain.group.dto.request.CgGroupSave;
-import hong.CashGuard.global.bean.AuditBean;
+import hong.CashGuard.global.bean.audit.AuditBean;
 import hong.CashGuard.global.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       {AuditBean} 위치 변경
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)

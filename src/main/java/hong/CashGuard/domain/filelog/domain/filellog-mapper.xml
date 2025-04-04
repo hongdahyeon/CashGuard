@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.filelog.domain.CgFileLogMapper">
+
+    <insert id="insert" parameterType="CgFileLog">
+        /* cgFileLog.insert */
+        INSERT INTO CASH_GUARD.CG_FILE_LOG (
+             FILE_UID
+            ,FILE_URL
+            ,REG_UID
+            ,REG_DT
+        ) VALUES (
+             #{fileUid}
+            ,#{fielUrl}
+            ,#{regUid}
+            ,NOW()
+        )
+    </insert>
+
+    <select id="list" parameterType="Long" resultType="CgFileLogList">
+        /* cgFileLog.list */
+        SELECT CFL.UID
+              ,CFL.FILE_UID
+              ,CFL.FILE_URL
+              ,CFL.REG_UID
+              ,CFL.REG_DT
+              ,CU.USER_NM AS REG_NM
+          FROM CASH_GUARD.CG_FILE_LOG CFL
+          LEFT JOIN CASH_GUARD.CG_USER CU ON CU.UID = CFL.REG_UID
+         WHERE CFL.FILE_UID = #{fileUid}
+    </select>
+</mapper>

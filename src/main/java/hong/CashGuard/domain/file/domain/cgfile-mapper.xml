@@ -53,4 +53,28 @@
          WHERE FILE_URL = #{fileUrl}
     </delete>
 
+    <select id="list" parameterType="CgFile" resultType="CgFileList">
+        /* cgFile.list */
+        SELECT CF.UID
+              ,CF.FILE_URL
+              ,CF.FILE_ID
+              ,CF.FILE_NM
+              ,CF.FILE_TYPE
+              ,CF.FILE_SIZE
+              ,CF.EXTENSION
+              ,CF.DOWNLOAD_CNT
+              ,CF.SAVED
+              ,CF.REG_UID
+              ,CF.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CF.UPDT_UID
+              ,CF.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_FILE CF
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CF.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CF.UPDT_UID
+         WHERE UID = #{uid}
+           AND DELETE_AT = 'N'
+           AND SAVED = #{saved}
+    </select>
 </mapper>
