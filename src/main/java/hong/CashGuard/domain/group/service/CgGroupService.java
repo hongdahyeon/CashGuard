@@ -16,6 +16,7 @@ import hong.CashGuard.domain.group.dto.request.CgGroupSave;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberApprove;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberSave;
 import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberAndCategoryList;
+import hong.CashGuard.domain.group.dto.response.CgGroupInfo;
 import hong.CashGuard.domain.group.dto.response.CgGroupList;
 import hong.CashGuard.domain.group.dto.response.category.CgGroupCategoryList;
 import hong.CashGuard.domain.group.dto.response.member.CgGroupMemberList;
@@ -47,6 +48,8 @@ import java.util.Map;
  * 2025-04-02        work       최초 생성
  * 2025-04-03        work       * 그룹 하위 그룹멤버, 카테고리 로직 분리
  *                              * 그룹 생성/수정 시점에 카테고리 정보도 함께 추가/삭제
+ * 2025-04-04        work       그룹 생성자(대표자) 정보도 그룹 멤버 테이블에 저장하도록 로직 변경
+ *                              => 대표자는 자동 승인 처리, is_exponent 값은 Y
  */
 
 @Service
@@ -71,9 +74,16 @@ public class CgGroupService {
     @Transactional
     public void saveGroup(CgGroupSave request) {
         Long loginUserUid = UserUtil.getLoginUserUid();
-        CgGroup insertGroup = new CgGroup(loginUserUid, request);
+        // 1. 그룹 생성
+        CgGroup insertGroup = new CgGroup(request);
         mapper.insert(insertGroup);
         Long groupUid = insertGroup.getUid();
+
+        // 2. 그룹 생성 대표자 -> 그룹 멤버에 추가 -> 자동 승인
+        memberMapper.insert(new CgGroupMember(loginUserUid, groupUid, "Y", "Y"));
+        memberMapper.approveMember(new CgGroupMember(loginUserUid, groupUid, "Y"));
+
+        // 3. 그룹 하위 카테고리 추가
         for(Long categoryUid : request.getUids()) {
             groupCategoryMapper.insert(new CgGroupCategory(groupUid, categoryUid));
         }
@@ -176,14 +186,15 @@ public class CgGroupService {
      * @author      work
      * @date        2025-04-02
      * @deacription 로그인 사용자의 그룹 목록 정보 조회 (with. 하위 사용자 목록 정보)
+     *              -> 로그인 사용자가 [대표자]로 있는 그룹 정보만 조회 (리스트)
     **/
     public List<CgGroupAndMemberAndCategoryList> findLoginUsersGroup() {
         Long loginUserUid = UserUtil.getLoginUserUid();
         List<CgGroupAndMemberAndCategoryList> loginUsersGroup = mapper.getLoginUsersGroup(loginUserUid);
         if( loginUsersGroup != null && !loginUsersGroup.isEmpty() ) {
             for( CgGroupAndMemberAndCategoryList dto : loginUsersGroup ) {
-                List<CgGroupMemberList> memberList = memberMapper.getAllGroupMember(dto.getUid());
-                List<CgGroupCategoryList> categoryList = groupCategoryMapper.getAllGroupCategory(dto.getUid());
+                List<CgGroupMemberList> memberList = memberMapper.getAllGroupMember(dto.getGroupUid());
+                List<CgGroupCategoryList> categoryList = groupCategoryMapper.getAllGroupCategory(dto.getGroupUid());
                 dto.setMembers(memberList);
                 dto.setCategories(categoryList);
             }
@@ -307,5 +318,18 @@ public class CgGroupService {
     public void saveInviteMember(Long userUid, Long groupUid) {
         memberMapper.insert(new CgGroupMember(userUid, groupUid));
         memberMapper.approveMember(new CgGroupMember(userUid, groupUid, "Y"));
+    }
+
+    /**
+     * @method      findGroupListByUserUid
+     * @author      work
+     * @date        2025-04-04
+     * @deacription 유저가 참여되어 있는 그룹 정보 리스트 조회
+     *              => 활성화된 그룹만 조회 가능
+     *              =>> 그룹 멤버 중에서 3명 이상이 승인 처리된 그룹만 활성화된 그룹이 된다.
+    **/
+    @Transactional(readOnly = true)
+    public List<CgGroupInfo> findGroupListByUserUid(Long userUid) {
+        return mapper.getGroupListByUserUid(userUid);
     }
 }

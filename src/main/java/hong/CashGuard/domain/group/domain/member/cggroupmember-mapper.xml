@@ -10,12 +10,14 @@
              ,JOIN_TYPE
              ,JOIN_DT
              ,IS_APPROVED
+             ,IS_EXPONENT
         ) VALUES (
               #{userUid}
              ,#{groupUid}
              ,#{joinType}
              ,NOW()
              ,#{isApproved}
+             ,#{isExponent}
         )
     </insert>
 
@@ -37,10 +39,12 @@
               ,CU.USER_EMAIL AS USER_EMAIL
               ,CGM.JOIN_DT AS JOIN_DT
               ,CGM.IS_APPROVED AS IS_APPROVED
+              ,CGM.IS_EXPONENT AS IS_EXPONENT
               ,CGM.APPROVED_DT AS APPROVED_DT
               ,CGM.JOIN_TYPE
               ,CASE WHEN CGM.JOIN_TYPE = 'APPLY' THEN '신청'
                     WHEN CGM.JOIN_TYPE = 'INVITE' THEN '초대'
+                    WHEN CGM.JOIN_TYPE = 'EXPONENT' THEN '대표자'
                 END AS JOIN_TYPE_NM
           FROM CASH_GUARD.CG_GROUP CGG
           LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGG.UID

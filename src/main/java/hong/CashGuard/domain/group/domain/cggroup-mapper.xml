@@ -5,16 +5,14 @@
     <insert id="insert" parameterType="CgGroup" useGeneratedKeys="true" keyProperty="uid">
         /* cgGroup.insert */
         INSERT INTO CASH_GUARD.CG_GROUP (
-             USER_UID
-            ,GROUP_NM
+             GROUP_NM
             ,IS_PRIVATE
             ,REG_UID
             ,REG_DT
             ,UPDT_UID
             ,UPDT_DT
         ) VALUES (
-             #{userUid}
-            ,#{groupNm}
+             #{groupNm}
             ,#{isPrivate}
             ,#{regUid}
             ,NOW()
@@ -26,7 +24,6 @@
     <select id="view" parameterType="Long" resultType="CgGroup">
         /* cgGroup.view */
         SELECT UID
-              ,USER_UID
               ,GROUP_NM
               ,IS_PRIVATE
           FROM CASH_GUARD.CG_GROUP
@@ -45,9 +42,9 @@
 
     <select id="page" parameterType="CgGroupParam" resultType="CgGroupList">
         /* cgGroup.page */
-        SELECT CGGROUP.UID
-              ,CGGROUP.USER_UID
-              ,CU_MASTER.USER_NM AS USER_NM
+        SELECT CGGROUP.UID AS GROUP_UID
+              ,CU_EXPONENT.UID AS EXPONENT_UID
+              ,CU_EXPONENT.USER_NM AS EXPONENT_NM
               ,CGGROUP.GROUP_NM
               ,CGGROUP.IS_PRIVATE
               ,( SELECT COUNT(*)
@@ -64,7 +61,8 @@
               ,CGGROUP.UPDT_DT AS UPDT_DT
               ,CU_UPDT.USER_NM AS UPDT_NM
           FROM CASH_GUARD.CG_GROUP CGGROUP
-         INNER JOIN CASH_GUARD.CG_USER CU_MASTER ON CU_MASTER.UID = CGGROUP.USER_UID
+          LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGGROUP.UID AND CGM.IS_EXPONENT = 'Y'
+         INNER JOIN CASH_GUARD.CG_USER CU_EXPONENT ON CU_EXPONENT.UID = CGM.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CGGROUP.REG_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CGGROUP.UPDT_UID
          WHERE 1 = 1
@@ -84,7 +82,8 @@
         /* cgGroup.count */
         SELECT COUNT(*)
           FROM CASH_GUARD.CG_GROUP CGGROUP
-         INNER JOIN CASH_GUARD.CG_USER CU_MASTER ON CU_MASTER.UID = CGGROUP.USER_UID
+          LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGGROUP.UID AND CGM.IS_EXPONENT = 'Y'
+         INNER JOIN CASH_GUARD.CG_USER CU_EXPONENT ON CU_EXPONENT.UID = CGM.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CGGROUP.REG_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CGGROUP.UPDT_UID
          WHERE 1 = 1
@@ -98,9 +97,9 @@
 
     <select id="list" parameterType="CgGroupParam" resultType="CgGroupList">
         /* cgGroup.page */
-        SELECT CGGROUP.UID
-              ,CGGROUP.USER_UID
-              ,CU_MASTER.USER_NM AS USER_NM
+        SELECT CGGROUP.UID AS GROUP_UID
+              ,CU_EXPONENT.UID AS EXPONENT_UID
+              ,CU_EXPONENT.USER_NM AS EXPONENT_NM
               ,CGGROUP.GROUP_NM
               ,CGGROUP.IS_PRIVATE
               ,( SELECT COUNT(*)
@@ -117,7 +116,8 @@
               ,CGGROUP.UPDT_DT AS UPDT_DT
               ,CU_UPDT.USER_NM AS UPDT_NM
           FROM CASH_GUARD.CG_GROUP CGGROUP
-         INNER JOIN CASH_GUARD.CG_USER CU_MASTER ON CU_MASTER.UID = CGGROUP.USER_UID
+          LEFT JOIN CASH_GUARD.CG_GROUP_MEMBER CGM ON CGM.GROUP_UID = CGGROUP.UID AND CGM.IS_EXPONENT = 'Y'
+         INNER JOIN CASH_GUARD.CG_USER CU_EXPONENT ON CU_EXPONENT.UID = CGM.USER_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CGGROUP.REG_UID
           LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CGGROUP.UPDT_UID
          WHERE 1 = 1
@@ -140,36 +140,60 @@
 
     <select id="getLoginUsersGroup" resultType="CgGroupAndMemberAndCategoryList" parameterType="Long">
         /* cgGroup.getLoginUsersGroup */
-        SELECT CGGROUP.UID
-              ,CGGROUP.USER_UID
-              ,CU_MASTER.USER_NM AS USER_NM
-              ,CGGROUP.GROUP_NM
-              ,CGGROUP.IS_PRIVATE
+        SELECT CGM.GROUP_UID AS GROUP_UID
+              ,CU_EXPONENT.UID AS EXPONENT_UID
+              ,CU_EXPONENT.USER_NM AS EXPONENT_NM
+              ,CG.GROUP_NM AS GROUP_NM
+              ,CG.IS_PRIVATE AS IS_PRIVATE
               ,( SELECT COUNT(*)
-                 FROM CASH_GUARD.CG_GROUP_MEMBER CM
-                 WHERE CM.GROUP_UID = CGGROUP.UID
-                   AND CM.IS_APPROVED = 'Y' ) AS APPROVED_MEMBER
+                   FROM CASH_GUARD.CG_GROUP_MEMBER CGM
+                  WHERE CGM.GROUP_UID = CG.UID
+                    AND CGM.IS_APPROVED = 'Y' ) AS APPROVED_MEMBER
               ,CASE
-                  WHEN ( SELECT COUNT(*)
-                           FROM CASH_GUARD.CG_GROUP_MEMBER CM2
-                          WHERE CM2.GROUP_UID = CGGROUP.UID
-                            AND CM2.IS_APPROVED = 'Y' ) >= 2
-                  THEN true
-                  ELSE false
+                   WHEN ( SELECT COUNT(*)
+                            FROM CASH_GUARD.CG_GROUP_MEMBER CGM2
+                           WHERE CGM2.GROUP_UID = CG.UID
+                             AND CGM2.IS_APPROVED = 'Y' ) >= 3
+                   THEN true
+                   ELSE false
                 END AS IS_ACTIVE
               ,( SELECT COUNT(*)
-                 FROM CASH_GUARD.CG_GROUP_MEMBER CM3
-                 WHERE CM3.GROUP_UID = CGGROUP.UID ) AS TOTAL_MEMBER
-              ,CGGROUP.REG_UID
-              ,CGGROUP.REG_DT AS REG_DT
+                   FROM CASH_GUARD.CG_GROUP_MEMBER CGM3
+                  WHERE CGM3.GROUP_UID = CG.UID ) AS TOTAL_MEMBER
+              ,CG.REG_UID AS REG_UID
+              ,CG.REG_DT AS REG_DT
               ,CU_REG.USER_NM AS REG_NM
-              ,CGGROUP.UPDT_UID
-              ,CGGROUP.UPDT_DT AS UPDT_DT
+              ,CG.UPDT_UID AS UPDT_UID
+              ,CG.UPDT_DT AS UPDT_DT
               ,CU_UPDT.USER_NM AS UPDT_NM
-          FROM CASH_GUARD.CG_GROUP CGGROUP
-         INNER JOIN CASH_GUARD.CG_USER CU_MASTER ON CU_MASTER.UID = CGGROUP.USER_UID
-          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CGGROUP.REG_UID
-          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CGGROUP.UPDT_UID
-         WHERE CGGROUP.USER_UID = #{userUid}
+          FROM CASH_GUARD.CG_GROUP_MEMBER CGM
+         INNER JOIN CASH_GUARD.CG_USER CU_EXPONENT ON CU_EXPONENT.UID = CGM.USER_UID
+         INNER JOIN CASH_GUARD.CG_GROUP CG ON CG.UID = CGM.GROUP_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CG.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CG.UPDT_UID
+         WHERE CGM.USER_UID = #{userUid}
+           AND CGM.IS_EXPONENT = 'Y'
+    </select>
+
+    <select id="getGroupListByUserUid" resultType="CgGroupInfo" parameterType="Long">
+        /* cgGroup.getGroupListByUserUid */
+        SELECT DISTINCT G.UID
+                       ,G.GROUP_NM
+                       ,CASE WHEN EXISTS (
+                                    SELECT 1
+                                      FROM CASH_GUARD.CG_GROUP_MEMBER GM_EXP
+                                     WHERE GM_EXP.GROUP_UID = G.UID
+                                       AND GM_EXP.USER_UID = #{userUid}
+                                       AND GM_EXP.IS_EXPONENT = 'Y' ) THEN TRUE ELSE FALSE END AS IS_EXPONENT
+                   FROM CASH_GUARD.CG_GROUP G
+                   JOIN (  SELECT GM.GROUP_UID -- 활성화된 그룹만
+                             FROM CASH_GUARD.CG_GROUP_MEMBER GM
+                            WHERE GM.IS_APPROVED = 'Y'
+                            GROUP BY GM.GROUP_UID
+                           HAVING COUNT(*) >= 3
+                   ) ACTIVE_GROUP ON G.UID = ACTIVE_GROUP.GROUP_UID JOIN CASH_GUARD.CG_GROUP_MEMBER GM
+                     ON GM.GROUP_UID = G.UID
+                    AND GM.USER_UID = #{userUid}
+                    AND (GM.IS_APPROVED = 'Y' OR GM.IS_EXPONENT = 'Y')
     </select>
 </mapper>

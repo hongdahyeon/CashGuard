@@ -25,7 +25,6 @@ import lombok.NoArgsConstructor;
 public class CgGroup extends AuditBean {
 
     private Long uid;
-    private Long userUid;
     private String groupNm;
     private String isPrivate;
 
@@ -35,8 +34,7 @@ public class CgGroup extends AuditBean {
      * @date        2025-04-02
      * @deacription 그룹 추가 생성자
     **/
-    public CgGroup(Long loginUserUid, CgGroupSave request) {
-        this.userUid = loginUserUid;
+    public CgGroup(CgGroupSave request) {
         this.groupNm = request.getGroupNm();
         this.isPrivate = request.getIsPrivate();
     }

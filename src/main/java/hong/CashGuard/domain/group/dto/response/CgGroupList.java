@@ -16,14 +16,15 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-04        work       {regUid, regDt, regNm, updtUid, updtDt, updtNm} => AuditMetaData 으로 빼기
+ * 2025-04-04        work       uid->groupUid, userUid->exponentUid, userNm->exponentNm
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CgGroupList extends AuditMetaData {
 
-    private Long uid;
-    private Long userUid;
-    private String userNm;
+    private Long groupUid;
+    private Long exponentUid;
+    private String exponentNm;
     private String groupNm;
     private String isPrivate;
     private int approvedMember;

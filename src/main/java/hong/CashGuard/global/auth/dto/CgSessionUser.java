@@ -2,11 +2,15 @@ package hong.CashGuard.global.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import hong.CashGuard.domain.code.UserRole;
+import hong.CashGuard.domain.group.dto.response.CgGroupInfo;
 import hong.CashGuard.domain.user.dto.response.CgUserView;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * packageName    : hong.CashGuard.global.auth.dto
@@ -20,6 +24,7 @@ import java.io.Serializable;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-04        work       세션 유저에 그룹 정보 담기 (활성화된 그룹만)
  */
 
 @Getter
@@ -41,6 +46,7 @@ public class CgSessionUser implements Serializable {
     private String isLocked;
     private String role;
     private String roleNm;
+    private List<CgSessionGroup> groups = new ArrayList<>();
 
     public CgSessionUser(CgUserView user) {
         this.uid = user.getUid();
@@ -57,5 +63,9 @@ public class CgSessionUser implements Serializable {
         this.isLocked = user.getIsLocked();
         this.role = user.getRole();
         this.roleNm = UserRole.getRoleNm(user.getRole());
+    }
+
+    public void setGroups(List<CgGroupInfo> groups) {
+        this.groups = (groups != null) ? groups.stream().map(CgSessionGroup::new).toList() : Collections.emptyList();
     }
 }

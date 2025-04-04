@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       그룹 멤버에 대표자 정보도 추가
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,10 +24,11 @@ public class CgGroupMember {
 
     private Long userUid;
     private Long groupUid;
-    private String joinType;    // GroupJoinType.INVITE, APPLY
+    private String joinType;    // GroupJoinType.INVITE, APPLY, EXPONENT
     private String joinDt;
     private String isApproved;
     private String approvedDt;
+    private String isExponent;  // 대표자 여부
 
     /**
      * @method      CgGroupMember 생성자 1
@@ -39,6 +41,7 @@ public class CgGroupMember {
         this.groupUid = request.getGroupUid();
         this.joinType = GroupJoinType.APPLY.name();
         this.isApproved = "N";
+        this.isExponent = "N";
     }
 
     /**
@@ -64,5 +67,20 @@ public class CgGroupMember {
         this.groupUid = groupUid;
         this.joinType = GroupJoinType.INVITE.name();;
         this.isApproved = "Y";
+        this.isExponent = "N";
+    }
+
+    /**
+     * @method      CgGroupMember 생성자 4
+     * @author      work
+     * @date        2025-04-04
+     * @deacription 그룹 생성시 -> 대표자 그룹 멤버 대표자로 추가용 생성자
+    **/
+    public CgGroupMember(Long userUid, Long groupUid, String isApproved, String isExponent) {
+        this.userUid = userUid;
+        this.groupUid = groupUid;
+        this.isApproved = isApproved;
+        this.isExponent = isExponent;
+        this.joinType = GroupJoinType.EXPONENT.name();
     }
 }

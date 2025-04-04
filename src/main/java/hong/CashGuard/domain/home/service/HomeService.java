@@ -28,6 +28,9 @@ import java.io.IOException;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-03        work       최초 생성 (이메일을 통한 초대하기 서비스 로직 추가)
+ * 2025-04-04        work       로그인 시점에 자신이 속한 활성화된 그룹을 세션에 담기에 순서 변경
+ *                              => 기존 ) 자동 로그인 이후에 그룹 멤버 담기
+ *                              => 이후 ) 그룹 멤버에 담고 자동 로그인 처리
  */
 
 @Service
@@ -61,17 +64,18 @@ public class HomeService {
                 throw new CGException("유효하지 않은 이메일 토큰입니다.", HttpStatus.BAD_REQUEST);
             } else {
 
-                // (1) 자동 로그인 처리
                 CgEmailLog emailLogBean = emailLogService.findEmailLogByUid(token);
                 String recipientEmail = emailLogBean.getRecipientEmail();
                 CgUserView user = userService.findUserByEmail(recipientEmail);
-                authenticationService.login(user.getUserId(), req);
 
-                // (2) 그룹으로 초대
+                // (1) 그룹으로 초대
                 groupService.saveInviteMember(user.getUid(), uid);
 
-                // (3) 초대장 이메일 토큰 유호성 없애기
+                // (2) 초대장 이메일 토큰 유호성 없애기
                 emailLogService.changeTokenIsRead(token);
+
+                // (3) 자동 로그인 처리
+                authenticationService.login(user.getUserId(), req);
 
                 // (4) 초대 완료 > 메인 페이지로 리디렉션
                 try {

@@ -7,11 +7,13 @@ import hong.CashGuard.domain.group.dto.request.CgGroupSave;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberApprove;
 import hong.CashGuard.domain.group.dto.request.member.CgGroupMemberSave;
 import hong.CashGuard.domain.group.dto.response.CgGroupAndMemberAndCategoryList;
+import hong.CashGuard.domain.group.dto.response.CgGroupInfo;
 import hong.CashGuard.domain.group.dto.response.CgGroupList;
 import hong.CashGuard.domain.group.dto.response.member.CgGroupMemberList;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
 import hong.CashGuard.global.bean.error.ErrorResponse;
+import hong.CashGuard.global.util.UserUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -175,5 +177,22 @@ public class CgGroupRestController {
     public ResponseEntity inviteMember(@RequestBody @Valid CgGroupInvite request) {
         service.inviteMember(request);
         return ResponseEntity.ok().build();
+    }
+
+    /**
+     *
+     * 로그인한 사용자가 속한 그룹 정보 조회
+     * => 활성화된 그룹만 조회 가능
+     * =>> 활성화된 그룹 : 승인된 멤버가 3명 이상인 그룹
+     * =>> [tip] 승인 멤버에는 대표자도 포함된다
+     *
+     * @api         [GET] /cguard/api/group/my
+     * @author      work
+     * @date        2025-04-04
+    **/
+    @GetMapping("/my")
+    public ResponseEntity findAllGroupByLoginUser() {
+        List<CgGroupInfo> groups = service.findGroupListByUserUid(UserUtil.getLoginUserUid());
+        return ResponseEntity.ok(groups);
     }
 }

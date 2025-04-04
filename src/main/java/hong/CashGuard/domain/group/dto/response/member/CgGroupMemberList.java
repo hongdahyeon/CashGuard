@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-03        work       패키지 이동
+ * 2025-04-04        work       대표자 여부 추가
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +27,7 @@ public class CgGroupMemberList {
     private String userTel;
     private String userEmail;
     private String isApproved;
+    private String isExponent;
     private String approvedDt;
     private String joinDt;
     private String joinType;

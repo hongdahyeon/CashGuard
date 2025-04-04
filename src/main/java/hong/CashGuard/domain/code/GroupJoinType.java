@@ -12,11 +12,13 @@ import lombok.Getter;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       그룹 멤버 테이블에 대표자도 담게 되면서, 대표자 타입 추가
  */
 
 @Getter
 public enum GroupJoinType {
 
+    EXPONENT("대표자"),
     INVITE("초대"),
     APPLY("신청");
 
