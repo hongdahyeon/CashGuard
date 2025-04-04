@@ -226,4 +226,18 @@
           FROM CASH_GUARD.CG_USER
          WHERE USER_EMAIL = #{userEmail}
     </select>
+
+    <select id="countByUserId" parameterType="String" resultType="int">
+        /* cgUser.countByUserId */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_USER
+         WHERE USER_ID = #{userId}
+    </select>
+
+    <select id="countByUserEmail" parameterType="String" resultType="int">
+        /* cgUser.countByUserEmail */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_USER
+         WHERE USER_EMAIL = #{userEmail}
+    </select>
 </mapper>

@@ -13,9 +13,10 @@ import org.apache.ibatis.annotations.Mapper;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       isExistCategoryCode => countByCategoryCd 이름 변경
  */
 @Mapper
 public interface CgCategoryMapper extends BaseMapper<CgCategory> {
 
-    Integer isExistCategoryCode(String code);
+    Integer countByCategoryCd(String code);
 }

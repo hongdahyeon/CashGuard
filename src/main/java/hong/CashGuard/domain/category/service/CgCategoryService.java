@@ -24,6 +24,9 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       카테고리 코드 중복 체크 메소드(isExistCategoryCode)가 메소드명과 반대로 리턴을 해줌
+ *                              => 헷갈리는 문제 발생
+ *                              => isExist(존재, 중복)한다면 true / 없다면 false 로 리턴해줌
  */
 
 @Service
@@ -48,11 +51,13 @@ public class CgCategoryService {
      * @author      work
      * @date        2025-04-02
      * @deacription 카테고리 코드 중복 체크
+     *              -> 있다면 : true  (중복되는 code)
+     *              -> 없다면 : false (사용 가능한 code)
     **/
     @Transactional(readOnly = true)
     public boolean isExistCategoryCode(String code) {
-        Integer findCodeCnt = mapper.isExistCategoryCode(code);
-        return findCodeCnt != 1;
+        Integer findCodeCnt = mapper.countByCategoryCd(code);
+        return findCodeCnt == 1;
     }
 
     /**

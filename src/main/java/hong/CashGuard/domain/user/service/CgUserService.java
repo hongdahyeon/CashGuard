@@ -32,6 +32,8 @@ import java.util.List;
  * 2025-03-27        work       최초 생성
  * 2025-03-31        home       page, list 서비스 로직 추가
  * 2025-04-01        work       update 서비스 로직 추가
+ * 2025-04-04        work       isExistUserId, isExistUserEmail 추가
+ *                              => 아이디, 이메일 중복 체크
  */
 
 @Service
@@ -40,6 +42,35 @@ public class CgUserService {
 
     private final CgUserMapper mapper;
     private final PasswordEncoder passwordEncoder;
+
+
+    /**
+     * @method      isExistUserId
+     * @author      work
+     * @date        2025-04-04
+     * @deacription {userId} 값을 갖고 있는 유저가 있는지 체크
+     *              -> 있다면 : true  (중복되는 userId)
+     *              -> 없다면 : false (사용 가능한 userId)
+    **/
+    @Transactional(readOnly = true)
+    public boolean isExistUserId(String userId) {
+        int findUserIdCnt = mapper.countByUserId(userId);
+        return findUserIdCnt == 1;
+    }
+
+    /**
+     * @method      isExistUserEmail
+     * @author      work
+     * @date        2025-04-04
+     * @deacription {userEmail} 값을 갖고 있는 유저가 있는지 체크
+     *              -> 있다면 : true (중복되는 userEmail)
+     *              -> 없다면 : false (사용 가능한 userEmail)
+    **/
+    @Transactional(readOnly = true)
+    public boolean isExistUserEmail(String userEmail) {
+        int findUserEmailCnt = mapper.countByUserEmail(userEmail);
+        return findUserEmailCnt == 1;
+    }
 
     /**
      * @method      saveUser

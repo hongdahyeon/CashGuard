@@ -28,6 +28,9 @@ import java.util.Map;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-04        work       {isExistCategoryCode} 리턴 값 변경 -> 로직 수정
+ *                              * 기존에는 {isExistCategoryCode}메소드명과 반대로 리턴을 해줘서 헷갈리는 문제 발생
+ *                                => 값이 중복(존재)한다면 true, 없다면 false로 리턴해주도록 변경
  */
 
 @RestController
@@ -79,7 +82,7 @@ public class CgCategoryRestController {
         }
 
         // { 카테고리 코드 } 값이 중복되는지 더블 체크
-        if( !service.isExistCategoryCode(request.getCategoryCd()) ) {
+        if( service.isExistCategoryCode(request.getCategoryCd()) ) {
             return this.checkIsDuplicateCategory(request.getCategoryCd());
         }
 
@@ -97,13 +100,13 @@ public class CgCategoryRestController {
     **/
     @GetMapping("/duplicate-check")
     public ResponseEntity checkDuplicateCode(@RequestParam("code") String code) {
-        boolean checkCanUse = service.isExistCategoryCode(code);
+        boolean isExists = service.isExistCategoryCode(code);
         String message = "사용 가능한 카테고리 코드 값입니다.";
         Map<String, Object> map = new HashMap<>();
-        if( !checkCanUse ) {
+        if( isExists ) {
             message = "중복된 카테고리 코드 값 입니다.";
         }
-        map.put("checkCanUse", checkCanUse);
+        map.put("checkCanUse", !isExists);
         map.put("message", message);
 
         return ResponseEntity.ok(map);

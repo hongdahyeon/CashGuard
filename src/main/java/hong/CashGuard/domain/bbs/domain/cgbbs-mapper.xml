@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.bbs.domain.CgBbsMapper">
+
+    <insert id="insert" parameterType="CgBbs">
+        /* cgBbs.insert */
+        INSERT INTO CASH_GUARD.CG_BBS (
+             BBS_TP_CD
+            ,BBS_NM
+            ,USE_AT
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+            ,DELETE_AT
+        ) VALUES (
+             #{bbsTpCd}
+            ,#{bbsNm}
+            ,#{useAt}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+            ,'N'
+        )
+    </insert>
+
+    <select id="view" parameterType="Long" resultType="CgBbs">
+        /* cgBbs.view */
+        SELECT UID
+              ,BBS_TP_CD
+              ,BBS_NM
+              ,USE_AT
+              ,DELETE_AT
+          FROM CASH_GUARD.CG_BBS
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgBbs">
+        /* cgBbs.update */
+        UPDATE CASH_GUARD.CG_BBS
+           SET BBS_TP_CD = #{bbsTpCd}
+              ,BBS_NM = #{bbsNm}
+              ,USE_AT = #{useAt}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <select id="getDetail" parameterType="Long" resultType="CgBbsView">
+        /* cgBbs.getDetail */
+        SELECT CB.UID
+              ,CB.BBS_TP_CD
+              ,CASE WHEN CB.BBS_TP_CD = 'NOTICE' THEN '공지사항'
+                    WHEN CB.BBS_TP_CD = 'BOARD' THEN '자유 게시판'
+                    WHEN CB.BBS_TP_CD = 'QNA' THEN '질의 응답'
+                    WHEN CB.BBS_TP_CD = 'FAQ' THEN 'faq'
+                END AS BBS_TP_CD_NM
+              ,CB.BBS_NM
+              ,CB.USE_AT
+              ,CB.DELETE_AT
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BBS CB
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE CB.UID = #{uid}
+    </select>
+
+    <select id="page" resultType="CgBbsList" parameterType="CgBbsParam">
+        /* cgBbs.page */
+        SELECT CB.UID
+              ,CB.BBS_TP_CD
+              ,CASE WHEN CB.BBS_TP_CD = 'NOTICE' THEN '공지사항'
+                    WHEN CB.BBS_TP_CD = 'BOARD' THEN '자유 게시판'
+                    WHEN CB.BBS_TP_CD = 'QNA' THEN '질의 응답'
+                    WHEN CB.BBS_TP_CD = 'FAQ' THEN 'faq'
+                END AS BBS_TP_CD_NM
+              ,CB.BBS_NM
+              ,CB.USE_AT
+              ,CB.DELETE_AT
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BBS CB
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND DELETE_AT = 'N'
+        <if test="bbsNm != null and bbsNm != ''">
+           AND CB.BBS_NM LIKE CONCAT('%',#{bbsNm},'%')
+        </if>
+        <if test="bbsTpCd != null and bbsTpCd != ''">
+           AND CB.BBS_TP_CD = #{bbsTpCd}
+        </if>
+        <if test="useAt != null and useAt != ''">
+           AND CB.USE_AT = #{useAt}
+        </if>
+         ORDER BY CB.REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="count" parameterType="CgBbsParam" resultType="int">
+        /* cgBbs.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_BBS CB
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND DELETE_AT = 'N'
+        <if test="bbsNm != null and bbsNm != ''">
+           AND CB.BBS_NM LIKE CONCAT('%',#{bbsNm},'%')
+        </if>
+        <if test="bbsTpCd != null and bbsTpCd != ''">
+           AND CB.BBS_TP_CD = #{bbsTpCd}
+        </if>
+        <if test="useAt != null and useAt != ''">
+           AND CB.USE_AT = #{useAt}
+        </if>
+    </select>
+
+    <select id="list" resultType="CgBbsList" parameterType="CgBbsParam">
+        /* cgBbs.list */
+        SELECT CB.UID
+              ,CB.BBS_TP_CD
+              ,CASE WHEN CB.BBS_TP_CD = 'NOTICE' THEN '공지사항'
+                    WHEN CB.BBS_TP_CD = 'BOARD' THEN '자유 게시판'
+                    WHEN CB.BBS_TP_CD = 'QNA' THEN '질의 응답'
+                    WHEN CB.BBS_TP_CD = 'FAQ' THEN 'faq'
+                END AS BBS_TP_CD_NM
+              ,CB.BBS_NM
+              ,CB.USE_AT
+              ,CB.DELETE_AT
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BBS CB
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND DELETE_AT = 'N'
+        <if test="bbsNm != null and bbsNm != ''">
+           AND CB.BBS_NM LIKE CONCAT('%',#{bbsNm},'%')
+        </if>
+        <if test="bbsTpCd != null and bbsTpCd != ''">
+           AND CB.BBS_TP_CD = #{bbsTpCd}
+        </if>
+        <if test="useAt != null and useAt != ''">
+           AND CB.USE_AT = #{useAt}
+        </if>
+         ORDER BY CB.REG_DT DESC
+    </select>
+
+    <delete id="delete" parameterType="CgBbs">
+        /* cgBbs.delete */
+        UPDATE CASH_GUARD.CG_BBS
+           SET DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </delete>
+</mapper>
