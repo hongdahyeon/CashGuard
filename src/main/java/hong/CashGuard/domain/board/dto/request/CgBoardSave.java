@@ -1,0 +1,29 @@
+package hong.CashGuard.domain.board.dto.request;
+
+import hong.CashGuard.global.bean.file.FileBean;
+import jakarta.validation.constraints.NotBlank;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+/**
+ * packageName    : hong.CashGuard.domain.board.dto.request
+ * fileName       : CgBoardSave
+ * author         : work
+ * date           : 2025-04-04
+ * description    : 게시글 저장 요청용 DTO
+ * ===========================================================
+ * DATE              AUTHOR             NOTE
+ * -----------------------------------------------------------
+ * 2025-04-04        work       최초 생성
+ */
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CgBoardSave extends FileBean {
+
+    @NotBlank
+    private String title;
+
+    @NotBlank
+    private String content;
+
+}

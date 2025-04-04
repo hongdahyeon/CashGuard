@@ -47,12 +47,15 @@ public class CgFileService {
      * @author      home
      * @date        2025-04-03
      * @deacription 첨부파일 저장 및 삭제
+     *              * {fileUid} 값은 add, del 값이 있는 경우에만 생성한다.
     **/
     @Transactional
     public Long saveAndDelFile(Long fileUid, FileDto[] addFile, String[] delFile) {
 
-        if( fileUid == null ) {
-            fileUid = this.generateKey();
+        if( (addFile != null && addFile.length > 0) || (delFile != null && delFile.length > 0) ) {
+            if (fileUid == null) {
+                fileUid = this.generateKey();
+            }
         }
 
         if( addFile != null && addFile.length > 0 ) {
@@ -69,6 +72,34 @@ public class CgFileService {
 
         return fileUid;
     }
+
+    /**
+     * @method      saveAndDelThumbnail
+     * @author      work
+     * @date        2025-04-04
+     * @deacription 썸네일 첨부파일 저장 및 삭제
+     *              * {thumbnail} 값은 add, del 값이 있는 경우에만 생성한다.
+    **/
+    @Transactional
+    public Long saveAndDelThumbnail(Long thumbnail, FileDto addThumbnail, String delThumbnail) {
+
+        if( (addThumbnail != null) || (delThumbnail != null) ) {
+            if (thumbnail == null) {
+                thumbnail = this.generateKey();
+            }
+        }
+
+        if( addThumbnail != null ) {
+            mapper.insert(new CgFile(thumbnail, addThumbnail));
+        }
+
+        if( delThumbnail != null ) {
+            mapper.delete(new CgFile(delThumbnail));
+        }
+
+        return thumbnail;
+    }
+
 
     /**
      * @method      findAllList
