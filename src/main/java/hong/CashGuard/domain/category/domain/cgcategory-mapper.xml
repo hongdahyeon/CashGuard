@@ -147,4 +147,12 @@
         </if>
          ORDER BY CATEGORY.CATEGORY_TP DESC, CATEGORY.CATEGORY_CD DESC
     </select>
+
+    <select id="countAllByLCategoryUid" parameterType="Long" resultType="int">
+        /* cgCategory.countAllByLCategoryUid */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_CATEGORY
+         WHERE UID = #{uid}
+           AND USE_AT = 'Y'
+    </select>
 </mapper>

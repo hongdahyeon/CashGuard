@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.trans.domain.CgTransMapper">
+
+    <insert id="insert" parameterType="CgLedger" useGeneratedKeys="true" keyProperty="uid">
+        /* cgTrans.insert */
+        INSERT INTO CASH_GUARD.CG_TRANS (
+                 LEDGER_UID
+                ,CATEGORY_UID
+                ,TRANS_CD
+                ,AMOUNT
+                ,DESCRIPTION
+                ,TRANS_DATE
+                ,NOTE
+                ,REG_UID
+                ,REG_DT
+                ,UPDT_UID
+                ,UPDT_DT
+        ) VALUES (
+                 #{ledgerUid}
+                ,#{categoryUid}
+                ,#{transCd}
+                ,#{amount}
+                ,#{description}
+                ,#{transDate}
+                ,#{note}
+                ,#{regUid}
+                ,NOW()
+                ,#{updtUid}
+                ,NOW()
+        )
+    </insert>
+</mapper>

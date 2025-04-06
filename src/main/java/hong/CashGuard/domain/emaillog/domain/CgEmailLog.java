@@ -29,7 +29,7 @@ public class CgEmailLog extends AuditBean {
     private String senderEmail;
     private String subject;
     private String content;
-    private String reasonCode;
+    private String reasonCode;      // [EmailSendReason]
     private String sentDt;
     private String isRead;
     private String readDt;

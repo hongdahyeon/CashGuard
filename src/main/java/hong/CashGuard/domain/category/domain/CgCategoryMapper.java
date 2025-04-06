@@ -14,9 +14,12 @@ import org.apache.ibatis.annotations.Mapper;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-04        work       isExistCategoryCode => countByCategoryCd 이름 변경
+ * 2025-04-06        note       countAllByLCategoryUid 추가
  */
 @Mapper
 public interface CgCategoryMapper extends BaseMapper<CgCategory> {
 
     Integer countByCategoryCd(String code);
+
+    int countAllByLCategoryUid(Long categoryUid);
 }

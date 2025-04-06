@@ -27,6 +27,7 @@ import java.util.List;
  * 2025-04-04        work       카테고리 코드 중복 체크 메소드(isExistCategoryCode)가 메소드명과 반대로 리턴을 해줌
  *                              => 헷갈리는 문제 발생
  *                              => isExist(존재, 중복)한다면 true / 없다면 false 로 리턴해줌
+ * 2025-04-06        note       ifHasCategory 추가 (uid 값으로 카테고리 정보 있는지 체크)
  */
 
 @Service
@@ -94,5 +95,18 @@ public class CgCategoryService {
     @Transactional(readOnly = true)
     public List<CgCategoryList> findAllList(CgCategoryParam param) {
         return mapper.list(param);
+    }
+
+
+    /**
+     * @method      ifHasCategory
+     * @author      note
+     * @date        2025-04-06
+     * @deacription {categoryUid} 값에 해당하는 카테고리 정보가 있는지 체크
+    **/
+    @Transactional(readOnly = true)
+    public boolean ifHasCategory(Long categoryUid) {
+        int count = mapper.countAllByLCategoryUid(categoryUid);
+        return count != 0;
     }
 }

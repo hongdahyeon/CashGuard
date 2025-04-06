@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * packageName    : hong.CashGuard.domain.ledger.service
@@ -25,6 +26,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-03        work       최초 생성
+ * 2025-04-06        note       ifHasLedger 추가 (ledgerUid, userUid 값으로 해당되는 가계부 있는지 체크)
  */
 
 @Service
@@ -91,5 +93,22 @@ public class CgLedgerService {
     @Transactional(readOnly = true)
     public List<CgLedgerList> findAllLedgerUserList(CgLedgerParam param) {
         return mapper.list(param);
+    }
+
+    /**
+     * @method      ifHasLedger
+     * @author      note
+     * @date        2025-04-06
+     * @deacription {ledgerUid}값에 해당하는 가계부 정보가 있는지 체크
+    **/
+    @Transactional(readOnly = true)
+    public boolean ifHasLedger(Long ledgerUid) {
+        Long loginUserUid = UserUtil.getLoginUserUid();
+        Map<String, Object> params = Map.of(
+                "ledgerUid", ledgerUid,
+                "userUid", loginUserUid
+        );
+        int countLedger = mapper.countAllByLedgerUid(params);
+        return countLedger != 0;
     }
 }

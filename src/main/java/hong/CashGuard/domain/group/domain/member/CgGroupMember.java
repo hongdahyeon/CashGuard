@@ -24,7 +24,7 @@ public class CgGroupMember {
 
     private Long userUid;
     private Long groupUid;
-    private String joinType;    // GroupJoinType.INVITE, APPLY, EXPONENT
+    private String joinType;    // [GroupJoinType] INVITE, APPLY, EXPONENT
     private String joinDt;
     private String isApproved;
     private String approvedDt;

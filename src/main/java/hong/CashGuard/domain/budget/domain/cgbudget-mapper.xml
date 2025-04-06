@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.budget.domain.CgBudgetMapper">
+
+    <insert id="insert" parameterType="CgBudget">
+        /* cgBudget.insert */
+        INSERT INTO CASH_GUARD.CG_BUDGET (
+              USER_UID
+             ,PERIOD_TYPE
+             ,PERIOD_VAL
+             ,TRANS_TP_CD
+             ,TRANS_TARGET_AMOUNT
+             ,EXCEED_ALERT
+             ,LEDGER_UID
+             ,DELETE_AT
+             ,REG_UID
+             ,REG_DT
+             ,UPDT_UID
+             ,UPDT_DT
+        ) VALUES (
+              #{userUid}
+             ,#{periodType}
+             ,#{periodVal}
+             ,#{transTpCd}
+             ,#{transTargetAmount}
+             ,#{exceedAlert}
+             ,#{ledgerUid}
+             ,'N'
+             ,#{regUid}
+             ,NOW()
+             ,#{updtUid}
+             ,NOW()
+        )
+    </insert>
+
+    <select id="view" parameterType="Long" resultType="CgBudget">
+        /* cgBudget.view */
+        SELECT UID
+              ,USER_UID
+              ,PERIOD_TYPE
+              ,PERIOD_VAL
+              ,TRANS_TP_CD
+              ,TRANS_TARGET_AMOUNT
+              ,EXCEED_ALERT
+              ,LEDGER_UID
+          FROM CASH_GUARD.CG_BUDGET
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgBudget">
+        /* cgBudget.update */
+        UPDATE CASH_GUARD.CG_BUDGET
+           SET PERIOD_TYPE = #{periodType}
+              ,PERIOD_VAL = #{periodVal}
+              ,TRANS_TP_CD = #{transTpCd}
+              ,TRANS_TARGET_AMOUNT = #{transTargetAmount}
+              ,EXCEED_ALERT = #{exceedAlert}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </update>
+
+    <select id="getDetail" parameterType="Long" resultType="CgBudgetView">
+        /* cgBudget.getDetail */
+        SELECT CB.UID AS BUDGET_UID
+              ,CB.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CB.PERIOD_TYPE
+              ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
+                    WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
+                    WHEN CB.PERIOD_TYPE = 'DAYS' THEN '일'
+                END AS PERIOD_TYPE_NM
+              ,CB.PERIOD_VAL
+              ,CB.TRANS_TP_CD
+              ,CASE WHEN CB.TRANS_TP_CD = 'INCOME' THEN '수입'
+                    WHEN CB.TRANS_TP_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_TP_CD_NM
+              ,CB.TRANS_TARGET_AMOUNT
+              ,CB.EXCEED_ALERT
+              ,CB.LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BUDGET CB
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CB.USER_UID
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CB.LEDGER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+    </select>
+
+    <select id="page" resultType="CgBudgetList" parameterType="CgBudgetParam">
+        /* cgBudget.page */
+        SELECT CB.UID AS BUDGET_UID
+              ,CB.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CB.PERIOD_TYPE
+              ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
+                    WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
+                    WHEN CB.PERIOD_TYPE = 'DAYS' THEN '일'
+                END AS PERIOD_TYPE_NM
+              ,CB.PERIOD_VAL
+              ,CB.TRANS_TP_CD
+              ,CASE WHEN CB.TRANS_TP_CD = 'INCOME' THEN '수입'
+                    WHEN CB.TRANS_TP_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_TP_CD_NM
+              ,CB.TRANS_TARGET_AMOUNT
+              ,CB.EXCEED_ALERT
+              ,CB.LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BUDGET CB
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CB.USER_UID
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CB.LEDGER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND CB.DELETE_AT = 'N'
+           AND CB.USER_UID = #{userUid}
+        <if test="periodType != null and periodType != ''">
+           AND CB.PERIOD_TYPE = #{periodType}
+        </if>
+        <if test="transTpCd != null and transTpCd != ''">
+           AND CB.TRANS_TP_CD = #{transTpCd}
+        </if>
+         ORDER BY CB.REG_DT DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="count" resultType="int" parameterType="CgBudgetParam">
+        /* cgBudget.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_BUDGET CB
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CB.USER_UID
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CB.LEDGER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND CB.DELETE_AT = 'N'
+           AND CB.USER_UID = #{userUid}
+        <if test="periodType != null and periodType != ''">
+           AND CB.PERIOD_TYPE = #{periodType}
+        </if>
+        <if test="transTpCd != null and transTpCd != ''">
+           AND CB.TRANS_TP_CD = #{transTpCd}
+        </if>
+    </select>
+
+    <select id="list" resultType="CgBudgetList" parameterType="CgBudgetParam">
+        /* cgBudget.list */
+        SELECT CB.UID AS BUDGET_UID
+              ,CB.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CB.PERIOD_TYPE
+              ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
+                    WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
+                    WHEN CB.PERIOD_TYPE = 'DAYS' THEN '일'
+                END AS PERIOD_TYPE_NM
+              ,CB.PERIOD_VAL
+              ,CB.TRANS_TP_CD
+              ,CASE WHEN CB.TRANS_TP_CD = 'INCOME' THEN '수입'
+                    WHEN CB.TRANS_TP_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_TP_CD_NM
+              ,CB.TRANS_TARGET_AMOUNT
+              ,CB.EXCEED_ALERT
+              ,CB.LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BUDGET CB
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CB.USER_UID
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CB.LEDGER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND CB.DELETE_AT = 'N'
+           AND CB.USER_UID = #{userUid}
+        <if test="periodType != null and periodType != ''">
+           AND CB.PERIOD_TYPE = #{periodType}
+        </if>
+        <if test="transTpCd != null and transTpCd != ''">
+           AND CB.TRANS_TP_CD = #{transTpCd}
+        </if>
+         ORDER BY CB.REG_DT DESC
+    </select>
+
+    <delete id="delete" parameterType="CgBudget">
+        /* cgBudget.delete */
+        UPDATE CASH_GUARD.CG_BUDGET
+           SET DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </delete>
+</mapper>

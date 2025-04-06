@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 public class CgBbs extends AuditBean {
 
     private Long uid;
-    private String bbsTpCd;
+    private String bbsTpCd;     // [BbsTpCd]
     private String bbsNm;
     private String useAt;
     private String deleteAt;

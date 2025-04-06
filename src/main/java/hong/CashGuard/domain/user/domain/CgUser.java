@@ -36,7 +36,7 @@ public class CgUser extends AuditBean {
     private String isEnable;
     private Integer pwdFailCnt;
     private String isLocked;
-    private String role;
+    private String role;        // [UserRole]
 
     /**
      * @method      CgUser 생성자 1

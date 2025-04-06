@@ -27,7 +27,7 @@ public class CgCategory extends AuditBean {
     private Long uid;
     private String categoryCd;
     private String categoryNm;
-    private String categoryTp;
+    private String categoryTp;  // [Category]
     private String useAt;
 
     /**

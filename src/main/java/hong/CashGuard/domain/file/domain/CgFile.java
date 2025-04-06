@@ -32,7 +32,7 @@ public class CgFile extends AuditBean {
     private String extension;
     private int downloadCnt;
     private String deleteAt;
-    private String saved;
+    private String saved;       // [FileSaved]
 
     /**
      * @method      CgFile 생성자 1

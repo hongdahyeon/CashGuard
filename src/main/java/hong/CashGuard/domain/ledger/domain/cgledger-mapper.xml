@@ -147,4 +147,13 @@
         </if>
         ORDER BY CL.REG_DT DESC
     </select>
+
+    <select id="countAllByLedgerUid" parameterType="map" resultType="int">
+        /* cgLedger.countAllByLedgerUid */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_LEDGER
+         WHERE UID = #{ledgerUid}
+           AND USER_UID = #{userUid}
+           AND DELETE_AT = 'N'
+    </select>
 </mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.calendar.domain.CgCalendarMapper">
+
+    <insert id="insert" parameterType="CgCalendar">
+        /* cgCalendar.insert */
+        INSERT INTO CASH_GUARD.CG_CALENDAR_EVENT (
+             TRANS_UID
+            ,START_DATE
+            ,END_DATE
+            ,ALL_DAY
+            ,BG_COLOR
+            ,BORDER_COLOR
+            ,TEXT_COLOR
+            ,USER_UID
+        ) VALUES (
+             #{transUid}
+            ,#{startDate}
+            ,#{endDate}
+            ,#{allDay}
+            ,#{bgColor}
+            ,#{borderColor}
+            ,#{textColor}
+            ,#{userUid}
+        )
+    </insert>
+</mapper>
