@@ -60,6 +60,9 @@ dependencies {
 	// properties 암호화
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
+	// Google Vision API (OCR 포함) 클라이언트 라이브러
+	implementation 'com.google.cloud:google-cloud-vision:3.3.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 
