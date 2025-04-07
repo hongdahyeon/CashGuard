@@ -253,4 +253,25 @@
               ,UPDT_DT = NOW()
          WHERE UID = #{uid}
     </delete>
+
+    <select id="checkTransExceed" parameterType="CgTransCheck" resultType="Long">
+        /* cgTrans.CgTransCheck */
+        SELECT COALESCE(SUM(CT.AMOUNT), 0)
+          FROM CASH_GUARD.CG_TRANS CT
+          LEFT JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         WHERE CL.USER_UID = #{userUid}
+           AND CT.LEDGER_UID = #{ledgerUid}
+           AND CT.TRANS_CD = #{transCd}
+           AND (CT.TRANS_DATE BETWEEN #{start} AND #{end})
+    </select>
+
+    <select id="getAlertUserInfo" resultType="CgTransCheckAlert" parameterType="Long">
+        /* cgTrans.getAlertUserInfo */
+        SELECT CL.LEDGER_NM AS LEDGER_NM
+              ,CU_USER.USER_EMAIL AS USER_EMAIL
+              ,CU_USER.USER_NM AS USER_NM
+          FROM CASH_GUARD.CG_LEDGER CL
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CL.USER_UID
+         WHERE CL.UID = #{ledgerUid}
+    </select>
 </mapper>

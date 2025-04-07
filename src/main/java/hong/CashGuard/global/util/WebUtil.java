@@ -1,6 +1,7 @@
 package hong.CashGuard.global.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-07        work       null 로직 분리
  */
 public class WebUtil {
 
@@ -24,7 +26,8 @@ public class WebUtil {
      * @deacription 아무 위치에서나 HttpServletRequest 얻기
     **/
     public static HttpServletRequest nowRequest() {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        return request;
+        RequestAttributes attrs = RequestContextHolder.getRequestAttributes();
+        if (attrs == null) return null;
+        return ((ServletRequestAttributes) attrs).getRequest();
     }
 }

@@ -1,5 +1,6 @@
 package hong.CashGuard.global.util;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -14,6 +15,7 @@ import java.time.temporal.ChronoUnit;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
+ * 2025-04-07        work       {today} 메소드 추가
  */
 public class TimeUtil {
 
@@ -22,6 +24,10 @@ public class TimeUtil {
 
     public static String nowDate(){
         return TODAY.format(DATE_TIME_FORMATTER);
+    }
+
+    public static LocalDate today() {
+        return LocalDate.now();
     }
 
     public static boolean isXYearAfter(String compareDateString, int year) {

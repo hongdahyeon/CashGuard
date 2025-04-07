@@ -12,6 +12,7 @@ import lombok.Getter;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       [getBudgetTrans] 추가
  */
 @Getter
 public enum BudgetTrans {
@@ -31,5 +32,14 @@ public enum BudgetTrans {
             }
         }
         return  false;
+    }
+
+    public static BudgetTrans getBudgetTrans(String code) {
+        for( BudgetTrans budgetTrans : BudgetTrans.values() ) {
+            if(budgetTrans.name().equals(code)) {
+                return budgetTrans;
+            }
+        }
+        return  null;
     }
 }

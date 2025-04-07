@@ -31,6 +31,8 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       예산 초과 체크 스케줄러를 위한 서비스 로직 추가
+ *                              => findAllBudgetList / findSendAlarmByUid / changeSendAlarmByUid
  */
 @Service
 @RequiredArgsConstructor
@@ -130,5 +132,40 @@ public class CgBudgetService {
     @Transactional
     public void deleteBudget(Long uid) {
         mapper.delete(new CgBudget(uid));
+    }
+
+    /**
+     * @method      findAllBudgetList
+     * @author      work
+     * @date        2025-04-07
+     * @deacription 사용자들이 작성한 예산 목포 목록 전부 조회
+    **/
+    @Transactional(readOnly = true)
+    public List<CgBudgetList> findAllBudgetList() {
+        return mapper.getAllBudgetList();
+    }
+
+
+    /**
+     * @method      findSendAlarmByUid
+     * @author      work
+     * @date        2025-04-07
+     * @deacription {budgetUid} 값으로 알람 전송 여부 조회하기
+     *              => 이미 한번 알람을 보냈다면 ,다시 재알람 전송을 하지 않는다.
+    **/
+    @Transactional(readOnly = true)
+    public String findSendAlarmByUid(Long budgetUid) {
+        return mapper.getSendAlarmByUid(budgetUid);
+    }
+
+    /**
+     * @method      changeSendAlarmByUid
+     * @author      work
+     * @date        2025-04-07
+     * @deacription {budgetUid} 값으로 알람 전송 여부 수정하기
+    **/
+    @Transactional
+    public void changeSendAlarmByUid(Long budgetUid) {
+        mapper.changeAlarmByUid(budgetUid);
     }
 }

@@ -9,8 +9,10 @@ import hong.CashGuard.domain.ledger.service.CgLedgerService;
 import hong.CashGuard.domain.trans.domain.CgTrans;
 import hong.CashGuard.domain.trans.domain.CgTransMapper;
 import hong.CashGuard.domain.trans.dto.request.CgTransChange;
+import hong.CashGuard.domain.trans.dto.request.CgTransCheck;
 import hong.CashGuard.domain.trans.dto.request.CgTransParam;
 import hong.CashGuard.domain.trans.dto.request.CgTransSave;
+import hong.CashGuard.domain.trans.dto.response.CgTransCheckAlert;
 import hong.CashGuard.domain.trans.dto.response.CgTransList;
 import hong.CashGuard.domain.trans.dto.response.CgTransView;
 import hong.CashGuard.global.bean.Page;
@@ -36,6 +38,7 @@ import java.util.Map;
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
  * 2025-04-07        work       수입/지출 수정, 단건 조회, 페이징/리스트 조회, 삭제 서비스 로직 추가
+ * 2025-04-07        work       예산 목표 초과 체크 스케줄러 관련 서비스 로직 추가
  */
 @Service
 @RequiredArgsConstructor
@@ -168,5 +171,27 @@ public class CgTransService {
             throw new CGException("해당되는 거래 내역 정보가 없습니다.", HttpStatus.BAD_REQUEST);
         }
         mapper.delete(new CgTrans(uid));
+    }
+
+    /**
+     * @method      checkTransExceed
+     * @author      work
+     * @date        2025-04-07
+     * @deacription {transCd: INCOME, EXPENSE} 코드값에 따른 {start ~ end} 날짜 범위 사이의 '수입/지출 합'
+    **/
+    @Transactional(readOnly = true)
+    public long checkTransExceed(CgTransCheck request) {
+        return mapper.checkTransExceed(request);
+    }
+
+    /**
+     * @method      getAlertUserInfoByLedgerUid
+     * @author      work
+     * @date        2025-04-07
+     * @deacription {ledgerUid} 값에 해당하는 가계부 및 사용자 정보 조회
+    **/
+    @Transactional(readOnly = true)
+    public CgTransCheckAlert getAlertUserInfoByLedgerUid(Long ledgerUid) {
+        return mapper.getAlertUserInfo(ledgerUid);
     }
 }

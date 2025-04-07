@@ -13,6 +13,7 @@ import java.util.Random;
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
  * 2025-04-01        work       {getOrDefault} 메소드 추가
+ * 2025-04-07        work       {numberFormat} 메소드 추가 => 돈 단위로 출력
  */
 public class StringUtil {
 
@@ -53,5 +54,9 @@ public class StringUtil {
 
     public static <T> T getOrDefault(T value, T defaultValue) {
         return (value != null) ? value : defaultValue;
+    }
+
+    public static String numberFormat(long amount) {
+        return String.format("%,d", amount);
     }
 }

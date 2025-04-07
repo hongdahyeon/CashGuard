@@ -20,6 +20,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       [sendAlarm] 필드 추가
  */
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CgBudget extends AuditBean {
@@ -31,6 +32,7 @@ public class CgBudget extends AuditBean {
     private String transTpCd;           // [BudgetTrans] 수입 or 지출 코드
     private long transTargetAmount;     // 목표 금액
     private String exceedAlert;
+    private String sendAlarm;
     private Long ledgerUid;
     private String deleteAt;
 

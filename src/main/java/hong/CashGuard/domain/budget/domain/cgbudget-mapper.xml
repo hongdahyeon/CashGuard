@@ -11,6 +11,7 @@
              ,TRANS_TP_CD
              ,TRANS_TARGET_AMOUNT
              ,EXCEED_ALERT
+             ,SEND_ALARM
              ,LEDGER_UID
              ,DELETE_AT
              ,REG_UID
@@ -24,6 +25,7 @@
              ,#{transTpCd}
              ,#{transTargetAmount}
              ,#{exceedAlert}
+             ,'N'
              ,#{ledgerUid}
              ,'N'
              ,#{regUid}
@@ -206,4 +208,54 @@
               ,UPDT_DT = NOW()
          WHERE UID = #{uid}
     </delete>
+
+    <select id="getAllBudgetList" resultType="CgBudgetList">
+        /* cgBudget.getAllBudgetList */
+        SELECT CB.UID AS BUDGET_UID
+              ,CB.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CB.PERIOD_TYPE
+              ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
+                    WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
+                    WHEN CB.PERIOD_TYPE = 'DAYS' THEN '일'
+                END AS PERIOD_TYPE_NM
+              ,CB.PERIOD_VAL
+              ,CB.TRANS_TP_CD
+              ,CASE WHEN CB.TRANS_TP_CD = 'INCOME' THEN '수입'
+                    WHEN CB.TRANS_TP_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_TP_CD_NM
+              ,CB.TRANS_TARGET_AMOUNT
+              ,CB.EXCEED_ALERT
+              ,CB.LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CB.REG_UID
+              ,CB.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CB.UPDT_UID
+              ,CB.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_BUDGET CB
+         INNER JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CB.USER_UID
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CB.LEDGER_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CB.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CB.UPDT_UID
+         WHERE 1 = 1
+           AND CB.DELETE_AT = 'N'
+           AND CB.EXCEED_ALERT = 'Y'
+         ORDER BY CB.USER_UID DESC
+    </select>
+
+    <select id="getSendAlarmByUid" parameterType="Long" resultType="String">
+        /* cgBudget.getSendAlarmByUid */
+        SELECT SEND_ALARM
+          FROM CASH_GUARD.CG_BUDGET
+         WHERE UID = #{budgetUid}
+    </select>
+
+    <update id="changeAlarmByUid" parameterType="Long">
+        /* cgBudget.updateSendAlarmByUid */
+        UPDATE CASH_GUARD.CG_BUDGET
+           SET SEND_ALARM = 'Y'
+         WHERE UID = #{budgetUid}
+    </update>
 </mapper>

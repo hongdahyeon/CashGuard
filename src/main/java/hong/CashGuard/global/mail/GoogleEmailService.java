@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-07        work       알람 발송 메소드 추가 (예산 초과 알람 발송)
  */
 
 @Service
@@ -55,6 +56,19 @@ public class GoogleEmailService {
             e.printStackTrace();
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public void sendAlertEmail(String to, String subject, String content) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        try{
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(content, true);
+            javaMailSender.send(message);
+        } catch(MessagingException e) {
+            e.printStackTrace();
         }
     }
 }
