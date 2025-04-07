@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       {startDate} 필드 추가
  */
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CgBudgetView extends AuditMetaData {
@@ -22,6 +23,7 @@ public class CgBudgetView extends AuditMetaData {
     private Long budgetUid;
     private Long userUid;
     private String userNm;
+    private String startDate;
     private String periodType;
     private String periodTypeNm;
     private long periodVal;

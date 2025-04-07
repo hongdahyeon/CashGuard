@@ -17,9 +17,13 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       startDate 필드 추가
  */
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CgBudgetSave {
+
+    @NotBlank
+    private String startDate;
 
     @NotBlank
     private String periodType;

@@ -23,3 +23,5 @@ hong:
     type-aliases-package: hong.CashGuard.**
   aes:
     secret-key: ENC(Xp88kHq5qRAaQjscukqzatp74s2nqHVOYfDZcapTltryEa6QIhUAJygFOa5UwWy9U2mIM/Hwc3cpfqDLr7510E4hMub/0IpMXhltEV1nSL8=)
+  mail:
+    sender: 'cashguard24@gmail.com'

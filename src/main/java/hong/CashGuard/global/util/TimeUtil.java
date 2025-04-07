@@ -3,6 +3,7 @@ package hong.CashGuard.global.util;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 
 /**
@@ -28,6 +29,39 @@ public class TimeUtil {
 
     public static LocalDate today() {
         return LocalDate.now();
+    }
+
+    /**
+     * @method      addTimeFormat
+     * @author      work
+     * @date        2025-04-07
+     * @description (입력) YYYY-MM-DD
+     *              (출력) YYYY-MM-DD HH:mm
+     */
+    public static String addTimeFormat(String dateString) {
+        DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        LocalDate date = LocalDate.parse(dateString, inputFormatter);
+        LocalDateTime dateTime = date.atStartOfDay(); // 00:00:00 붙이기
+
+        return dateTime.format(outputFormatter); // "2025-04-01 00:00"
+    }
+
+    /**
+     * @method      formatToDateTimeHM
+     * @author      work
+     * @date        2025-04-07
+     * @deacription (형식 변환) "2025-05-01T23:59:59" => "2025-05-01 23:59"
+    **/
+    public static String formatToDateTimeHM(String isoDateTime) {
+        if (isoDateTime == null || isoDateTime.isBlank()) return "";
+        try {
+            LocalDateTime dt = LocalDateTime.parse(isoDateTime);
+            return dt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        } catch (DateTimeParseException e) {
+            return isoDateTime; // 혹시 잘못된 형식이면 원본 리턴
+        }
     }
 
     public static boolean isXYearAfter(String compareDateString, int year) {

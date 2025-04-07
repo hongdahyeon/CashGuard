@@ -13,12 +13,14 @@ import lombok.Getter;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-03        work       {reason} 값이 valid 한 값인지 체크 메소드 추가
+ * 2025-04-07        work       [BUDGET_ALERT] 코드 추가
  */
 
 @Getter
 public enum EmailSendReason {
 
-    INVITE_GROUP("그룹 초대");
+    INVITE_GROUP("그룹 초대"),
+    BUDGET_ALERT("예산 초과 알람");
 
     private String description;
 

@@ -6,6 +6,7 @@
         /* cgBudget.insert */
         INSERT INTO CASH_GUARD.CG_BUDGET (
               USER_UID
+             ,START_DATE
              ,PERIOD_TYPE
              ,PERIOD_VAL
              ,TRANS_TP_CD
@@ -20,6 +21,7 @@
              ,UPDT_DT
         ) VALUES (
               #{userUid}
+             ,#{startDate}
              ,#{periodType}
              ,#{periodVal}
              ,#{transTpCd}
@@ -39,6 +41,7 @@
         /* cgBudget.view */
         SELECT UID
               ,USER_UID
+              ,START_DATE
               ,PERIOD_TYPE
               ,PERIOD_VAL
               ,TRANS_TP_CD
@@ -52,7 +55,8 @@
     <update id="update" parameterType="CgBudget">
         /* cgBudget.update */
         UPDATE CASH_GUARD.CG_BUDGET
-           SET PERIOD_TYPE = #{periodType}
+           SET START_DATE = #{startDate}
+              ,PERIOD_TYPE = #{periodType}
               ,PERIOD_VAL = #{periodVal}
               ,TRANS_TP_CD = #{transTpCd}
               ,TRANS_TARGET_AMOUNT = #{transTargetAmount}
@@ -67,6 +71,7 @@
         SELECT CB.UID AS BUDGET_UID
               ,CB.USER_UID
               ,CU_USER.USER_NM AS USER_NM
+              ,CB.START_DATE
               ,CB.PERIOD_TYPE
               ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
                     WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
@@ -99,6 +104,7 @@
         SELECT CB.UID AS BUDGET_UID
               ,CB.USER_UID
               ,CU_USER.USER_NM AS USER_NM
+              ,CB.START_DATE
               ,CB.PERIOD_TYPE
               ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
                     WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
@@ -163,6 +169,7 @@
         SELECT CB.UID AS BUDGET_UID
               ,CB.USER_UID
               ,CU_USER.USER_NM AS USER_NM
+              ,CB.START_DATE
               ,CB.PERIOD_TYPE
               ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
                     WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'
@@ -214,6 +221,7 @@
         SELECT CB.UID AS BUDGET_UID
               ,CB.USER_UID
               ,CU_USER.USER_NM AS USER_NM
+              ,CB.START_DATE
               ,CB.PERIOD_TYPE
               ,CASE WHEN CB.PERIOD_TYPE = 'YEAR' THEN '년'
                     WHEN CB.PERIOD_TYPE = 'MONTH' THEN '월'

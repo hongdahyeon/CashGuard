@@ -3,6 +3,7 @@ package hong.CashGuard.domain.emaillog.service;
 import hong.CashGuard.domain.emaillog.domain.CgEmailLog;
 import hong.CashGuard.domain.emaillog.domain.CgEmailLogMapper;
 import hong.CashGuard.domain.emaillog.dto.request.EmailLogSave;
+import hong.CashGuard.domain.emaillog.dto.request.EmailLogSaveAlarm;
 import hong.CashGuard.global.mail.GoogleEmailService;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-07        work       예산 초과에 따른 메일 발송 서비스 로직 추가
  */
 
 @Service
@@ -33,6 +35,7 @@ public class CgEmailLogService {
      * @author      work
      * @date        2025-04-02
      * @deacription 이메일 발송 정보 저장 및 전송
+     *              => 그룹 초대 시점 이용
     **/
     @Transactional
     public void EmailLogSaveAndSend(EmailLogSave request) {
@@ -45,6 +48,26 @@ public class CgEmailLogService {
                                     UserUtil.getLoginUser().getUserNm(),
                                     request.getSubject(),
                                     request.getContent());
+    }
+
+    /**
+     * @method      saveEmailLogAndSendAlertAlarm
+     * @author      work
+     * @date        2025-04-07
+     * @deacription 이메일 발송 정보 저장
+     *              => 예산 초과 알람 발송 시점에 이용
+    **/
+    @Transactional
+    public void saveEmailLogAndSendAlertAlarm(EmailLogSaveAlarm request) {
+        // 1. 이메일 전송 정보 저장
+        CgEmailLog cgEmailLog = new CgEmailLog(request);
+        mapper.insert(cgEmailLog);
+
+        // 2. 이메일 전송
+        googleEmailService.sendAlertEmail(request.getRecipientEmail(), request.getSubject(), request.getContent());
+
+        // 3. 이메일 읽음 여부 자동 변경
+        mapper.changeIsRead(cgEmailLog.getUid());
     }
 
 

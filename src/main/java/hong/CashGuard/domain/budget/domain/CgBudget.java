@@ -4,6 +4,7 @@ import hong.CashGuard.domain.budget.dto.request.CgBudgetChange;
 import hong.CashGuard.domain.budget.dto.request.CgBudgetSave;
 import hong.CashGuard.global.bean.audit.AuditBean;
 import hong.CashGuard.global.util.StringUtil;
+import hong.CashGuard.global.util.TimeUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,15 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-06        note       최초 생성
- * 2025-04-07        work       [sendAlarm] 필드 추가
+ * 2025-04-07        work       * [sendAlarm] 필드 추가
+ *                              * [startDate] 필드 추가
  */
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class CgBudget extends AuditBean {
 
     private Long uid;
     private Long userUid;
+    private String startDate;
     private String periodType;          // [BudgetPeriod] 예산 기간 유형 : 년 월 일
     private long periodVal;             // 예산 기간 값   : 유형 값
     private String transTpCd;           // [BudgetTrans] 수입 or 지출 코드
@@ -44,6 +47,7 @@ public class CgBudget extends AuditBean {
     **/
     public CgBudget(CgBudgetSave request, Long loginUserUid) {
         this.userUid = loginUserUid;
+        this.startDate = TimeUtil.addTimeFormat(request.getStartDate()).toString();
         this.periodType = request.getPeriodType();
         this.periodVal = request.getPeriodVal();
         this.transTpCd = request.getTransTpCd();
@@ -61,6 +65,10 @@ public class CgBudget extends AuditBean {
     public CgBudget changeBudget(Long uid, CgBudgetChange request) {
         this.uid = uid;
         this.userUid = this.userUid;
+
+        String dateString = StringUtil.getOrDefault(request.getStartDate(), this.startDate);
+        this.startDate = TimeUtil.addTimeFormat(dateString).toString();
+
         this.periodType = StringUtil.getOrDefault(request.getPeriodType(), this.periodType);
         this.periodVal = StringUtil.getOrDefault(request.getPeriodVal(), this.periodVal);
         this.transTpCd = StringUtil.getOrDefault(request.getTransTpCd(), this.transTpCd);
