@@ -12,6 +12,7 @@
                 ,DESCRIPTION
                 ,TRANS_DATE
                 ,NOTE
+                ,DELETE_AT
                 ,REG_UID
                 ,REG_DT
                 ,UPDT_UID
@@ -24,10 +25,232 @@
                 ,#{description}
                 ,#{transDate}
                 ,#{note}
+                ,'N'
                 ,#{regUid}
                 ,NOW()
                 ,#{updtUid}
                 ,NOW()
         )
     </insert>
+
+    <select id="view" resultType="CgTrans" parameterType="Long">
+        /* cgTrans.view */
+        SELECT UID
+              ,LEDGER_UID
+              ,CATEGORY_UID
+              ,TRANS_CD
+              ,AMOUNT
+              ,DESCRIPTION
+              ,TRANS_DATE
+              ,NOTE
+          FROM CASH_GUARD.CG_TRANS
+         WHERE UID = #{uid}
+    </select>
+
+    <update id="update" parameterType="CgTrans">
+        /* cgTrans.update */
+        UPDATE CASH_GUARD.CG_TRANS
+           SET CATEGORY_UID = #{categoryUid}
+              ,TRANS_CD = #{transCd}
+              ,AMOUNT = #{amount}
+              ,DESCRIPTION = #{description}
+              ,TRANS_DATE = #{transDate}
+              ,NOTE = #{note}
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID =#{uid}
+    </update>
+
+    <select id="getDetail" parameterType="Long" resultType="CgTransView">
+        /* cgTrans.getDetail */
+        SELECT CT.UID AS TRANS_UID
+              ,CT.LEDGER_UID AS LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CT.CATEGORY_UID AS CATEGORY_UID
+              ,CC.CATEGORY_NM AS CATEGORY_NM
+              ,CC.CATEGORY_CD AS CATEGORY_CD
+              ,CC.CATEGORY_TP
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN '지출 카테고리'
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                END AS CATEGORY_TP_NM
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN false
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN false
+                END AS CATEGORY_TP_IS_ADD
+              ,CT.TRANS_CD AS TRANS_CD
+              ,CASE WHEN CT.TRANS_CD = 'INCOME' THEN '수입'
+                    WHEN CT.TRANS_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_CD_NM
+              ,CT.AMOUNT AS AMOUNT
+              ,CT.DESCRIPTION AS DESCRIPTION
+              ,CT.TRANS_DATE AS TRANS_DATE
+              ,CT.NOTE AS NOTE
+              ,CT.REG_UID
+              ,CT.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CT.UPDT_UID
+              ,CT.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_TRANS CT
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         INNER JOIN CASH_GUARD.CG_CATEGORY CC ON CC.UID = CT.CATEGORY_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CT.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CT.UPDT_UID
+         WHERE CT.UID = #{uid}
+    </select>
+
+    <select id="page" parameterType="CgTransParam" resultType="CgTransList">
+        /* cgTrans.page */
+        SELECT CT.UID AS TRANS_UID
+              ,CT.LEDGER_UID AS LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CT.CATEGORY_UID AS CATEGORY_UID
+              ,CC.CATEGORY_NM AS CATEGORY_NM
+              ,CC.CATEGORY_CD AS CATEGORY_CD
+              ,CC.CATEGORY_TP
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN '지출 카테고리'
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                END AS CATEGORY_TP_NM
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN false
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN false
+                END AS CATEGORY_TP_IS_ADD
+              ,CT.TRANS_CD AS TRANS_CD
+              ,CASE WHEN CT.TRANS_CD = 'INCOME' THEN '수입'
+                    WHEN CT.TRANS_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_CD_NM
+              ,CT.AMOUNT AS AMOUNT
+              ,CT.DESCRIPTION AS DESCRIPTION
+              ,CT.TRANS_DATE AS TRANS_DATE
+              ,CT.NOTE AS NOTE
+              ,CT.REG_UID
+              ,CT.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CT.UPDT_UID
+              ,CT.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_TRANS CT
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         INNER JOIN CASH_GUARD.CG_CATEGORY CC ON CC.UID = CT.CATEGORY_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CT.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CT.UPDT_UID
+         WHERE 1 = 1
+           AND CL.USER_UID = #{userUid}
+           AND CT.DELETE_AT = 'N'
+        <if test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+           AND CT.TRANS_DATE BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="ledgerUid != null">
+           AND CL.UID = #{ledgerUid}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CC.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="transCd != null and transCd != ''">
+           AND CT.TRANS_CD = #{transCd}
+        </if>
+         ORDER BY CT.TRANS_DATE DESC
+        <if test="startNumber != null and endNumber != null">
+         LIMIT #{endNumber} OFFSET #{startNumber}
+        </if>
+    </select>
+
+    <select id="list" parameterType="CgTransParam" resultType="CgTransList">
+        /* cgTrans.list */
+        SELECT CT.UID AS TRANS_UID
+              ,CT.LEDGER_UID AS LEDGER_UID
+              ,CL.LEDGER_NM AS LEDGER_NM
+              ,CT.CATEGORY_UID AS CATEGORY_UID
+              ,CC.CATEGORY_NM AS CATEGORY_NM
+              ,CC.CATEGORY_CD AS CATEGORY_CD
+              ,CC.CATEGORY_TP
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN '지출 카테고리'
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
+                END AS CATEGORY_TP_NM
+              ,CASE WHEN CC.CATEGORY_TP = 'INCOME' THEN true
+                    WHEN CC.CATEGORY_TP = 'EXPENSE' THEN false
+                    WHEN CC.CATEGORY_TP = 'SAVINGS' THEN false
+                END AS CATEGORY_TP_IS_ADD
+              ,CT.TRANS_CD AS TRANS_CD
+              ,CASE WHEN CT.TRANS_CD = 'INCOME' THEN '수입'
+                    WHEN CT.TRANS_CD = 'EXPENSE' THEN '지출'
+                END AS TRANS_CD_NM
+              ,CT.AMOUNT AS AMOUNT
+              ,CT.DESCRIPTION AS DESCRIPTION
+              ,CT.TRANS_DATE AS TRANS_DATE
+              ,CT.NOTE AS NOTE
+              ,CT.REG_UID
+              ,CT.REG_DT
+              ,CU_REG.USER_NM AS REG_NM
+              ,CT.UPDT_UID
+              ,CT.UPDT_DT
+              ,CU_UPDT.USER_NM AS UPDT_NM
+          FROM CASH_GUARD.CG_TRANS CT
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         INNER JOIN CASH_GUARD.CG_CATEGORY CC ON CC.UID = CT.CATEGORY_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CT.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CT.UPDT_UID
+         WHERE 1 = 1
+           AND CL.USER_UID = #{userUid}
+           AND CT.DELETE_AT = 'N'
+        <if test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+           AND CT.TRANS_DATE BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="ledgerUid != null">
+           AND CL.UID = #{ledgerUid}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CC.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="transCd != null and transCd != ''">
+           AND CT.TRANS_CD = #{transCd}
+        </if>
+         ORDER BY CT.TRANS_DATE DESC
+    </select>
+
+    <select id="count" parameterType="CgTransParam" resultType="int">
+        /* cgTrans.count */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_TRANS CT
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         INNER JOIN CASH_GUARD.CG_CATEGORY CC ON CC.UID = CT.CATEGORY_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_REG ON CU_REG.UID = CT.REG_UID
+          LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CT.UPDT_UID
+         WHERE 1 = 1
+           AND CL.USER_UID = #{userUid}
+           AND CT.DELETE_AT = 'N'
+        <if test="(startDate != null and startDate != '') and (endDate != null and endDate != '')">
+           AND CT.TRANS_DATE BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="ledgerUid != null">
+           AND CL.UID = #{ledgerUid}
+        </if>
+        <if test="categoryTp != null and categoryTp != ''">
+           AND CC.CATEGORY_TP = #{categoryTp}
+        </if>
+        <if test="transCd != null and transCd != ''">
+           AND CT.TRANS_CD = #{transCd}
+        </if>
+    </select>
+
+    <select id="checkTransUid" parameterType="map" resultType="int">
+        /* cgTrnas.checkTransUid */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_TRANS CT
+         INNER JOIN CASH_GUARD.CG_LEDGER CL ON CL.UID = CT.LEDGER_UID
+         WHERE CL.USER_UID = #{userUid}
+           AND CT.UID = #{transUid}
+    </select>
+
+    <delete id="delete" parameterType="CgTrans">
+        /* cgTrans.delete */
+        UPDATE CASH_GUARD.CG_TRANS
+           SET DELETE_AT = 'Y'
+              ,UPDT_UID = #{updtUid}
+              ,UPDT_DT = NOW()
+         WHERE UID = #{uid}
+    </delete>
 </mapper>

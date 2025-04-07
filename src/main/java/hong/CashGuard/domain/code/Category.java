@@ -12,13 +12,14 @@ import lombok.Getter;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
+ * 2025-04-07        work       EXPEND -> EXPENSE
  */
 
 @Getter
 public enum Category {
 
     INCOME("수입 카테고리", true),
-    EXPEND("지출 카테고리", false),
+    EXPENSE("지출 카테고리", false),
     SAVINGS("저축/투자 카테고리", false);
 
     private String categoryNm;

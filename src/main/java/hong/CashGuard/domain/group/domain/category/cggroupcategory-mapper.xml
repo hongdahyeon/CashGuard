@@ -34,11 +34,11 @@
               ,CATEGORY.CATEGORY_NM
               ,CATEGORY.CATEGORY_TP
               ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN '수입 카테고리'
-                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN '지출 카테고리'
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPENSE' THEN '지출 카테고리'
                     WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN '저축/투자 카테고리'
                 END AS CATEGORY_TP_NM
               ,CASE WHEN CATEGORY.CATEGORY_TP = 'INCOME' THEN true
-                    WHEN CATEGORY.CATEGORY_TP = 'EXPEND' THEN false
+                    WHEN CATEGORY.CATEGORY_TP = 'EXPENSE' THEN false
                     WHEN CATEGORY.CATEGORY_TP = 'SAVINGS' THEN false
                 END AS CATEGORY_TP_IS_ADD
           FROM CASH_GUARD.CG_GROUP_CATEGORY CGG

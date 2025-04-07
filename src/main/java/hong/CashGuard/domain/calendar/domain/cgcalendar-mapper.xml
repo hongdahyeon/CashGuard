@@ -24,4 +24,29 @@
             ,#{userUid}
         )
     </insert>
+
+    <update id="update" parameterType="CgCalendar">
+        /* cgCalendar.update */
+        UPDATE CASH_GUARD.CG_CALENDAR_EVENT
+           SET START_DATE = #{startDate}
+              ,END_DATE = #{endDate}
+              ,ALL_DAY = #{allDay}
+         WHERE TRANS_UID = #{transUid}
+    </update>
+
+    <select id="getDetail" resultType="CgCalendarView" parameterType="Long">
+        /* cgCalendar.getDetail */
+        SELECT CCE.UID AS CALENDAR_UID
+              ,CCE.USER_UID
+              ,CU_USER.USER_NM AS USER_NM
+              ,CCE.START_DATE
+              ,CCE.END_DATE
+              ,CCE.ALL_DAY
+              ,CCE.BG_COLOR
+              ,CCE.BORDER_COLOR
+              ,CCE.TEXT_COLOR
+          FROM CASH_GUARD.CG_CALENDAR_EVENT CCE
+          LEFT JOIN CASH_GUARD.CG_USER CU_USER ON CU_USER.UID = CCE.USER_UID
+         WHERE CCE.TRANS_UID = #{transUid}
+    </select>
 </mapper>

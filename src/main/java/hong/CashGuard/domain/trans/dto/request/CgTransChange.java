@@ -8,20 +8,18 @@ import lombok.NoArgsConstructor;
 
 /**
  * packageName    : hong.CashGuard.domain.trans.dto.request
- * fileName       : CgTransSave
- * author         : note
- * date           : 2025-04-06
- * description    : 수입/지출 저장 요청용 DTO
+ * fileName       : CgTransChange
+ * author         : work
+ * date           : 2025-04-07
+ * description    : 수입/지출 수정 요청용 DTO
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2025-04-06        note       최초 생성
+ * 2025-04-07        work       최초 생성
  */
-@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CgTransSave {
 
-    @NotNull
-    private Long ledgerUid;         // 가계부 UID
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class CgTransChange {
 
     @NotNull
     private Long categoryUid;       // 카테고리 UID
