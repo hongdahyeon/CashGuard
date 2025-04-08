@@ -21,10 +21,17 @@ import java.time.temporal.ChronoUnit;
 public class TimeUtil {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
     private static final LocalDateTime TODAY = LocalDateTime.now();
 
     public static String nowDate(){
         return TODAY.format(DATE_TIME_FORMATTER);
+    }
+
+    public static String nowDateYYMMDD() {
+        return TODAY.format(DATE_FORMATTER);
     }
 
     public static LocalDate today() {

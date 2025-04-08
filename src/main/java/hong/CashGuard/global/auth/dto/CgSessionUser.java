@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import hong.CashGuard.domain.code.UserRole;
 import hong.CashGuard.domain.group.dto.response.CgGroupInfo;
 import hong.CashGuard.domain.user.dto.response.CgUserView;
+import hong.CashGuard.global.util.TimeUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
@@ -46,6 +47,7 @@ public class CgSessionUser implements Serializable {
     private String isLocked;
     private String role;
     private String roleNm;
+    private String sessionId;
     private List<CgSessionGroup> groups = new ArrayList<>();
 
     public CgSessionUser(CgUserView user) {
@@ -67,5 +69,9 @@ public class CgSessionUser implements Serializable {
 
     public void setGroups(List<CgGroupInfo> groups) {
         this.groups = (groups != null) ? groups.stream().map(CgSessionGroup::new).toList() : Collections.emptyList();
+    }
+
+    public void customSessionId() {
+        this.sessionId = this.userId + "-" + "session" + TimeUtil.nowDateYYMMDD();
     }
 }

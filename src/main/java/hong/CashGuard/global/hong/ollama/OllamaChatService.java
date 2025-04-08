@@ -1,5 +1,7 @@
 package hong.CashGuard.global.hong.ollama;
 
+import hong.CashGuard.global.util.UserUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
@@ -17,15 +19,17 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
+@RequiredArgsConstructor
 public class OllamaChatService {
 
-    private final ChatClient chatClient;
-
-    public OllamaChatService(ChatClient.Builder chatClientBuilder) {
-        this.chatClient = chatClientBuilder.build();
-    }
+   private final ChatClient chatClient;
+   private final CustomJdbcMemory jdbcMemory;
 
     public String ask(String prompt) {
-        return chatClient.prompt().user(prompt).call().content();
+        String sessionId = UserUtil.getLoginUser().getSessionId();
+        jdbcMemory.setSessionId(sessionId);
+        return chatClient.prompt()
+                .user(prompt)
+                .call().content();
     }
 }

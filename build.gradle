@@ -63,8 +63,11 @@ dependencies {
 	// Google Vision API (OCR 포함) 클라이언트 라이브러
 	implementation 'com.google.cloud:google-cloud-vision:3.3.0'
 
-	// Spring AI
+	// Spring AI Ollama
 	implementation("org.springframework.ai:spring-ai-ollama-spring-boot-starter:1.0.0-M6")
+
+	// Spring AI JDBC Memory
+	implementation("org.springframework.ai:spring-ai-jdbc-store-spring-boot-starter:1.0.0-M6")
 
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'

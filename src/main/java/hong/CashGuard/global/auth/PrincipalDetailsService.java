@@ -49,5 +49,6 @@ public class PrincipalDetailsService implements UserDetailsService {
         // user.setMenu(menu)
         List<CgGroupInfo> groups= groupService.findGroupListByUserUid(user.getUid());
         user.setGroups(groups);
+        user.customSessionId();
     }
 }

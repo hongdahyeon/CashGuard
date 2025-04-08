@@ -13,7 +13,7 @@ spring:
     ollama:
       base-url: http://localhost:11434
       chat:
-        model: tinyllama
+        model: gemma:2b
 
 server:
   port: 8084
