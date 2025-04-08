@@ -1,12 +1,15 @@
 package hong.CashGuard.global.hong.ollama;
 
+import hong.CashGuard.global.hong.ollama.domain.CgChatMemory;
+import hong.CashGuard.global.hong.ollama.domain.CustomJdbcMapper;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.*;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * packageName    : hong.CashGuard.global.hong.ollama
@@ -20,17 +23,17 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-08        work       최초 생성
+ * 2025-04-08        work       JdbcTemplate 이용에서 매퍼 mybatis 이용으로 변경
  */
 @Component
 public class CustomJdbcMemory implements ChatMemory {
 
     private String sessionId;
     private String userId;
+    private final CustomJdbcMapper mapper;
 
-    private final JdbcTemplate jdbcTemplate;
-
-    public CustomJdbcMemory(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public CustomJdbcMemory(CustomJdbcMapper mapper) {
+        this.mapper = mapper;
     }
 
     public void setSessionId(String sessionId, String userId) {
@@ -47,20 +50,15 @@ public class CustomJdbcMemory implements ChatMemory {
     @Override
     public void add(String conversationId, List<Message> messages) {
         for (Message message : messages) {
-            int index = jdbcTemplate.queryForObject(
-                    "SELECT COALESCE(MAX(message_index), -1) + 1 FROM cash_guard.cg_chat_memory WHERE session_id = ?",
-                    Integer.class,
-                    this.sessionId
-            );
-            jdbcTemplate.update(
-                    "INSERT INTO cash_guard.cg_chat_memory(session_id, user_id, delete_at, message_index, role, content) VALUES (?, ?, ?, ?, ?, ?)",
-                    this.sessionId,
-                    this.userId,
-                    "N",
-                    index,
-                    message.getMessageType().getValue(), // "user", "assistant", etc.
-                    message.getText()
-            );
+            int index = mapper.getIndex(this.sessionId);
+            CgChatMemory bean = CgChatMemory.insertChatBuilder()
+                    .sessionId(this.sessionId)
+                    .messageIndex(index)
+                    .role(message.getMessageType().getValue())
+                    .content(message.getText())
+                    .userId(this.userId)
+                    .build();
+            mapper.insertConversation(bean);
         }
     }
 
@@ -68,36 +66,39 @@ public class CustomJdbcMemory implements ChatMemory {
      * @method      get
      * @author      work
      * @date        2025-04-08
-     * @deacription {sessionId} 값을 통해 이전 대화 내용 가져오기
+     * @deacription {sessionId},{lastN} 값을 통해 이전 대화 내용 가져오기
     **/
     @Override
     public List<Message> get(String conversationId, int lastN) {
-        String sql = """
-            SELECT role, content
-              FROM cash_guard.cg_chat_memory
-             WHERE session_id = ?
-               AND delete_at = 'N'
-             ORDER BY message_index DESC
-             LIMIT ?
-            """;
 
-        List<Message> messages = jdbcTemplate.query(sql, new Object[]{this.sessionId, lastN}, (rs, rowNum) -> {
-            String role = rs.getString("role");
-            String content = rs.getString("content");
+        Map<String, Object> params = Map.of(
+          "sessionId", this.sessionId,
+          "limit", lastN
+        );
+        List<CgChatMemory> chatList = mapper.getChatList(params);
 
-            MessageType messageType = MessageType.fromValue(role);  // USER, ASSISTANT, TOOL, SYSTEM, TOOL
+        List<Message> messages = new ArrayList<>();
+        for (CgChatMemory chatMemory : chatList) {
+            Message message;
+            String role = chatMemory.getRole();
+            String content = chatMemory.getContent();
+            MessageType messageType = MessageType.fromValue(role); // USER, ASSISTANT, TOOL, SYSTEM
+
             switch (messageType) {
                 case USER:
-                    return new UserMessage(content);
+                    message = new UserMessage(content);
+                    break;
                 case ASSISTANT:
-                    return new AssistantMessage(content);
+                    message = new AssistantMessage(content);
+                    break;
                 case SYSTEM:
-                    return new SystemMessage(content);
+                    message = new SystemMessage(content);
+                    break;
                 default:
                     throw new IllegalArgumentException("Unsupported message type: " + role);
             }
-        });
-
+            messages.add(message);
+        }
         Collections.reverse(messages);
         return messages;
     }
@@ -106,11 +107,11 @@ public class CustomJdbcMemory implements ChatMemory {
      * @method      clear
      * @author      work
      * @date        2025-04-08
-     * @deacription {sessionId}에 해당하는 대화 내용 삭제
+     * @deacription {sessionId} 값으로 대화 내용 삭제
     **/
     @Override
     public void clear(String conversationId) {
-        jdbcTemplate.update("UPDATE cash_guard.cg_chat_memory SET delete_at = 'Y' WHERE session_id = ?", this.sessionId);
+        mapper.clearBySessionId(this.sessionId);
     }
 
 
@@ -118,9 +119,9 @@ public class CustomJdbcMemory implements ChatMemory {
      * @method      clearUserConversation
      * @author      work
      * @date        2025-04-08
-     * @deacription {methodId} 값으로 대화 내용 삭제
+     * @deacription {userId} 값으로 대화 내용 삭제
     **/
     public void clearUserConversation(String userId) {
-        jdbcTemplate.update("UPDATE cash_guard.cg_chat_memory SET delete_at = 'Y' WHERE user_id = ?", userId);
+        mapper.clearByUserId(userId);
     }
 }

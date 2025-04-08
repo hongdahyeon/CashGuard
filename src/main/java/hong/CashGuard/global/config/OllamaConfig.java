@@ -1,11 +1,11 @@
 package hong.CashGuard.global.config;
 
 import hong.CashGuard.global.hong.ollama.CustomJdbcMemory;
+import hong.CashGuard.global.hong.ollama.domain.CustomJdbcMapper;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * packageName    : hong.CashGuard.global.config
@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-08        work       최초 생성
+ * 2025-04-08        work       defaultSystem 제거 , jdbcTemplate -> 매퍼 이용 변경
  */
 
 @Configuration
@@ -32,11 +33,6 @@ public class OllamaConfig {
     public ChatClient chatClient(ChatClient.Builder builder, CustomJdbcMemory chatMemory) {
         return builder
                 .defaultAdvisors(new MessageChatMemoryAdvisor(chatMemory))  // 채팅 문맥 저장 기능을 이용한다
-                .defaultSystem("""
-                    너는 친절하고 기억력이 좋은 한국어 챗봇이야.
-                    사용자가 이전에 말한 내용을 기억하고, 관련된 대화가 이어지도록 답변해.
-                    모르는 경우 추측하지 말고, 이전 문맥과 관련해서 대답하도록 해.
-                """)
                 .build();
     }
 
@@ -48,7 +44,7 @@ public class OllamaConfig {
      *              => Spring AI가 문맥 저장소로 인식한다
     **/
     @Bean
-    public CustomJdbcMemory customJdbcMemory(JdbcTemplate jdbcTemplate) {
-        return new CustomJdbcMemory(jdbcTemplate);
+    public CustomJdbcMemory customJdbcMemory(CustomJdbcMapper mapper) {
+        return new CustomJdbcMemory(mapper);
     }
 }

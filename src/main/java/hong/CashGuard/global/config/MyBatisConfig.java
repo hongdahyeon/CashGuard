@@ -5,13 +5,11 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.mybatis.spring.SqlSessionFactoryBean;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.TransactionManager;
@@ -28,7 +26,7 @@ import javax.sql.DataSource;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-03-27        work       최초 생성
- * 2025-04-08        work       jdbcTemplate 등록 로직 추가
+ * 2025-04-08        work       jdbcTemplate 등록 로직 추가 => 다시 제거
  */
 @Component
 public class MyBatisConfig {
@@ -129,17 +127,5 @@ public class MyBatisConfig {
     @Bean(name = "transactionManager")
     public TransactionManager transactionManager(DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
-    }
-
-    /**
-     * @method      jdbcTemplate
-     * @author      work
-     * @date        2025-04-08
-     * @deacription {JdbcTemplate} 등록
-     *              => {dataSource}를 기반으로 동작한다.
-    **/
-    @Bean(name = "jdbcTemplateDataSource")
-    public JdbcTemplate jdbcTemplate(@Qualifier("dataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
     }
 }
