@@ -209,4 +209,12 @@
           LEFT JOIN CASH_GUARD.CG_USER CU_UPDT ON CU_UPDT.UID = CBOARD.UPDT_UID
          WHERE CBOARD.UID = #{uid}
     </select>
+
+    <select id="countAllByBbsUid" parameterType="Long" resultType="int">
+        /* cgBoard.countAllByBbsUid */
+        SELECT COUNT(*)
+          FROM CASH_GUARD.CG_BOARD
+         WHERE BBS_UID = #{bbsUid}
+           AND DELETE_AT = 'N'
+    </select>
 </mapper>

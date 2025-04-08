@@ -1,4 +1,4 @@
-package hong.CashGuard.global.mail;
+package hong.CashGuard.global.hong.google;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.io.UnsupportedEncodingException;
 
 /**
- * packageName    : hong.CashGuard.global.mail
+ * packageName    : hong.CashGuard.global.hong.google
  * fileName       : GoogleEmailService
  * author         : work
  * date           : 2025-04-02
@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-07        work       알람 발송 메소드 추가 (예산 초과 알람 발송)
+ * 2025-04-08        work       패키지 위치 이동 ( mail -> hong/google )
  */
 
 @Service

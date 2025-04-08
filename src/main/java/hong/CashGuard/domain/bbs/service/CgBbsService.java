@@ -7,6 +7,7 @@ import hong.CashGuard.domain.bbs.dto.request.CgBbsParam;
 import hong.CashGuard.domain.bbs.dto.request.CgBbsSave;
 import hong.CashGuard.domain.bbs.dto.response.CgBbsList;
 import hong.CashGuard.domain.bbs.dto.response.CgBbsView;
+import hong.CashGuard.domain.board.service.CgBoardService;
 import hong.CashGuard.domain.code.BbsTpCd;
 import hong.CashGuard.global.bean.Page;
 import hong.CashGuard.global.bean.Pageable;
@@ -28,6 +29,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-04        work       최초 생성
+ * 2025-04-08        work       게시판 삭제 이전에, 하위 게시글 존재 여부 체크
  */
 
 @Service
@@ -35,6 +37,7 @@ import java.util.List;
 public class CgBbsService {
 
     private final CgBbsMapper mapper;
+    private final CgBoardService boardService;
 
     /**
      * @method      saveBbs
@@ -118,7 +121,10 @@ public class CgBbsService {
     **/
     @Transactional
     public void deleteBbs(Long bbsUid) {
-        // TODO : bbsUid 값 하위에 게시글이 없는지 더블 체크
+        int countAllByBbsUid = boardService.countAllByBbsUid(bbsUid);
+        if( countAllByBbsUid != 0 ) {
+            throw new CGException(bbsUid + "번 게시판 하위에 게시글이 존재하여 삭제할 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
         mapper.delete(new CgBbs(bbsUid));
     }
 }

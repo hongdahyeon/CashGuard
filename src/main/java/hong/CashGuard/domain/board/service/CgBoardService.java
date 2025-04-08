@@ -31,6 +31,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-04        work       최초 생성
+ * 2025-04-08        work       {bbsUid} 하위에 게시글 개수 구하기
  */
 
 @Service
@@ -49,7 +50,6 @@ public class CgBoardService {
     **/
     @Transactional
     public void saveBoard(Long groupUid, Long bbsUid, CgBoardSave request) {
-        // todo  check
         Long loginUserUid = UserUtil.getLoginUserUid();
         // 아직 로그인 유저가 {groupUid} 에 속한 유저가 인라면 -> 게시글 작성 불가능
         if( groupService.canJoin(groupUid, loginUserUid) ) {
@@ -130,6 +130,17 @@ public class CgBoardService {
             detail.setThumbnail(thumbnail);
         }
         return detail;
+    }
+
+    /**
+     * @method      countAllByBbsUid
+     * @author      work
+     * @date        2025-04-08
+     * @deacription {bbsUid} 하위에 게시글 개수 구하기
+    **/
+    @Transactional(readOnly = true)
+    public int countAllByBbsUid(Long bbsUid) {
+        return mapper.countAllByBbsUid(bbsUid);
     }
 
 }

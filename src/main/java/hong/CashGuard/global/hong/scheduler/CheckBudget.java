@@ -1,4 +1,4 @@
-package hong.CashGuard.global.scheduler;
+package hong.CashGuard.global.hong.scheduler;
 
 import hong.CashGuard.domain.budget.dto.response.CgBudgetList;
 import hong.CashGuard.domain.budget.service.CgBudgetService;
@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * packageName    : hong.CashGuard.global.scheduler
+ * packageName    : hong.CashGuard.global.hong.scheduler
  * fileName       : CheckBudget
  * author         : work
  * date           : 2025-04-07
@@ -34,6 +34,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-07        work       최초 생성
+ * 2025-04-08        work       패키지 위치 이동 ( global/scheduler -> global/hong/scheduler )
  */
 
 @Slf4j

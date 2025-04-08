@@ -4,14 +4,14 @@ import hong.CashGuard.domain.emaillog.domain.CgEmailLog;
 import hong.CashGuard.domain.emaillog.domain.CgEmailLogMapper;
 import hong.CashGuard.domain.emaillog.dto.request.EmailLogSave;
 import hong.CashGuard.domain.emaillog.dto.request.EmailLogSaveAlarm;
-import hong.CashGuard.global.mail.GoogleEmailService;
+import hong.CashGuard.global.hong.google.GoogleEmailService;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * packageName    : hong.CashGuard.domain.email.service
+ * packageName    : hong.CashGuard.domain.emaillog.service
  * fileName       : CgEmailLogService
  * author         : work
  * date           : 2025-04-02
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
  * -----------------------------------------------------------
  * 2025-04-02        work       최초 생성
  * 2025-04-07        work       예산 초과에 따른 메일 발송 서비스 로직 추가
+ * 2025-04-08        work       패키지 위치 이동 (mail -> emaillog)
  */
 
 @Service

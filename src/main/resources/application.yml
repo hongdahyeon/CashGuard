@@ -9,6 +9,11 @@ spring:
     check-template-location: true
     mode: HTML
     cache: false
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: tinyllama
 
 server:
   port: 8084
