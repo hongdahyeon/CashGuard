@@ -25,14 +25,17 @@ import java.util.List;
 public class CustomJdbcMemory implements ChatMemory {
 
     private String sessionId;
+    private String userId;
+
     private final JdbcTemplate jdbcTemplate;
 
     public CustomJdbcMemory(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void setSessionId(String sessionId) {
+    public void setSessionId(String sessionId, String userId) {
         this.sessionId = sessionId;
+        this.userId = userId;
     }
 
     /**
@@ -50,8 +53,10 @@ public class CustomJdbcMemory implements ChatMemory {
                     this.sessionId
             );
             jdbcTemplate.update(
-                    "INSERT INTO cash_guard.cg_chat_memory(session_id, message_index, role, content) VALUES (?, ?, ?, ?)",
+                    "INSERT INTO cash_guard.cg_chat_memory(session_id, user_id, delete_at, message_index, role, content) VALUES (?, ?, ?, ?, ?, ?)",
                     this.sessionId,
+                    this.userId,
+                    "N",
                     index,
                     message.getMessageType().getValue(), // "user", "assistant", etc.
                     message.getText()
@@ -71,6 +76,7 @@ public class CustomJdbcMemory implements ChatMemory {
             SELECT role, content
               FROM cash_guard.cg_chat_memory
              WHERE session_id = ?
+               AND delete_at = 'N'
              ORDER BY message_index DESC
              LIMIT ?
             """;
@@ -104,6 +110,17 @@ public class CustomJdbcMemory implements ChatMemory {
     **/
     @Override
     public void clear(String conversationId) {
-        jdbcTemplate.update("DELETE FROM cash_guard.cg_chat_memory WHERE session_id = ?", this.sessionId);
+        jdbcTemplate.update("UPDATE cash_guard.cg_chat_memory SET delete_at = 'Y' WHERE session_id = ?", this.sessionId);
+    }
+
+
+    /**
+     * @method      clearUserConversation
+     * @author      work
+     * @date        2025-04-08
+     * @deacription {methodId} 값으로 대화 내용 삭제
+    **/
+    public void clearUserConversation(String userId) {
+        jdbcTemplate.update("UPDATE cash_guard.cg_chat_memory SET delete_at = 'Y' WHERE user_id = ?", userId);
     }
 }

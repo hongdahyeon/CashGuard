@@ -1,5 +1,6 @@
 package hong.CashGuard.global.hong.ollama;
 
+import hong.CashGuard.domain.chat.dto.request.ChatRequest;
 import hong.CashGuard.global.util.UserUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.ai.chat.client.ChatClient;
@@ -25,11 +26,14 @@ public class OllamaChatService {
    private final ChatClient chatClient;
    private final CustomJdbcMemory jdbcMemory;
 
-    public String ask(String prompt) {
-        String sessionId = UserUtil.getLoginUser().getSessionId();
-        jdbcMemory.setSessionId(sessionId);
+    public String ask(ChatRequest request) {
+        jdbcMemory.setSessionId(UserUtil.getLoginUser().getSessionId(), UserUtil.getLoginUser().getUserId());
         return chatClient.prompt()
-                .user(prompt)
+                .user(request.getQ())
                 .call().content();
+    }
+
+    public void deleteConversation() {
+        jdbcMemory.clearUserConversation(UserUtil.getLoginUser().getUserId());
     }
 }

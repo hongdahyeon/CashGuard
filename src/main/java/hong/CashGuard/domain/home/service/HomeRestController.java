@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.Map;
  * 2025-04-03        work       * 패키지 이동
  *                              * 초대 API 추가 : /api/invite-link/{token}
  * 2025-04-08        work       "/ask" API 추가 ( Spring AI Ollama 이용 )
+ *                              => 다시 제거 (CgChatRestController 로 뺴둠)
  */
 
 @RestController
@@ -59,11 +59,6 @@ public class HomeRestController {
         Long uid = (Long) map.get("uid");
         String reasonCode = (String) map.get("code");
         return homeService.inviteUser(token, uid, reasonCode, req, res);
-    }
-
-    @GetMapping("/ask")
-    public String ask(@RequestParam(name = "q") String q) {
-        return chatService.ask(q);
     }
 
 }
