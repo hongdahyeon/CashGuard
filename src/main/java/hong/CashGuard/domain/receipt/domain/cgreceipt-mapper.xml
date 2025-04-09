@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="hong.CashGuard.domain.receipt.domain.CgReceiptMapper">
+
+    <insert id="insert" parameterType="CgReceipt">
+        /* cgReceipt.insert */
+        INSERT INTO CASH_GUARD.CG_RECEIPT (
+             USER_UID
+            ,IMAGE_UID
+            ,SCANNED_DATA
+            ,REG_UID
+            ,REG_DT
+            ,UPDT_UID
+            ,UPDT_DT
+        ) VALUES (
+             #{userUid}
+            ,#{imageUid}
+            ,#{scannedData}
+            ,#{regUid}
+            ,NOW()
+            ,#{updtUid}
+            ,NOW()
+        )
+    </insert>
+</mapper>

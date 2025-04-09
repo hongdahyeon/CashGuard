@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
  * -----------------------------------------------------------
  * 2025-04-03        home       최초 생성
  * 2025-04-04        work       {AuditBean} 위치 변경
+ * 2025-04-09        work       * {filePath} 필드 추가
+ *                              * {다운로드 횟수 카운팅 생성자} 추가
  */
 
 @Getter @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,6 +31,7 @@ public class CgFile extends AuditBean {
     private String fileNm;
     private String fileType;
     private String fileSize;
+    private String filePath;
     private String extension;
     private int downloadCnt;
     private String deleteAt;
@@ -40,13 +43,14 @@ public class CgFile extends AuditBean {
      * @date        2025-04-03
      * @deacription 파일 저장 생성자
     **/
-    public CgFile(Long fileUid, FileDto dto) {
+    public CgFile(Long fileUid, FileDto dto, String filePath) {
         this.uid = fileUid;
         this.fileUrl = dto.getFileUrl();
         this.fileId = dto.getFileId();
         this.fileNm = dto.getFileNm();
         this.fileType = dto.getFileType();
         this.fileSize = dto.getFileSize();
+        this.filePath = filePath;
         this.extension = dto.getExtension();
         this.saved = dto.getSaved();
     }
@@ -71,5 +75,17 @@ public class CgFile extends AuditBean {
     public CgFile(Long uid, String saved) {
         this.uid = uid;
         this.saved = saved;
+    }
+
+    /**
+     * @method      CgFile 생성자 4
+     * @author      work
+     * @date        2025-04-09
+     * @deacription 다운로드 횟수 카운팅 생성자
+    **/
+    public CgFile updateDownloadCnt(String fileId) {
+        this.fileId = fileId;
+        this.downloadCnt = this.downloadCnt + 1;
+        return this;
     }
 }

@@ -11,7 +11,7 @@
             ,REG_DT
         ) VALUES (
              #{fileUid}
-            ,#{fielUrl}
+            ,#{fileUrl}
             ,#{regUid}
             ,NOW()
         )

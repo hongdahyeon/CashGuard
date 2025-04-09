@@ -34,6 +34,7 @@ import java.util.List;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-08        work       최초 생성
+ * 2025-04-09        work       throws 에서 try-catch문으로 변경
  */
 @Service
 @RequiredArgsConstructor
@@ -41,24 +42,31 @@ public class GoogleVisionService {
 
     private final ImageAnnotatorClient imageAnnotatorClient;
 
-    public String extractText(MultipartFile file) throws IOException {
-        // 1. MultipartFile -> ByteString
-        ByteString imgBytes = ByteString.readFrom(file.getInputStream());
-        List<AnnotateImageRequest> requests = this.makeRequestBuilder(imgBytes);
+    public String extractText(MultipartFile file) {
 
-        // 3. [ImageAnnotatorClient]를 통해 Google Vision API 호출
-        BatchAnnotateImagesResponse response = imageAnnotatorClient.batchAnnotateImages(requests);
-        List<AnnotateImageResponse> responses = response.getResponsesList();
+        try {
 
-        StringBuilder extractedText = new StringBuilder();
-        for (AnnotateImageResponse res : responses) {
-            if (res.hasError()) {
-                throw new CGException("OCR 실패: " + res.getError().getMessage(), HttpStatus.BAD_REQUEST);
+            // 1. MultipartFile -> ByteString
+            ByteString imgBytes = ByteString.readFrom(file.getInputStream());
+            List<AnnotateImageRequest> requests = this.makeRequestBuilder(imgBytes);
+
+            // 3. [ImageAnnotatorClient]를 통해 Google Vision API 호출
+            BatchAnnotateImagesResponse response = imageAnnotatorClient.batchAnnotateImages(requests);
+            List<AnnotateImageResponse> responses = response.getResponsesList();
+
+            StringBuilder extractedText = new StringBuilder();
+            for (AnnotateImageResponse res : responses) {
+                if (res.hasError()) {
+                    throw new CGException("OCR 실패: " + res.getError().getMessage(), HttpStatus.BAD_REQUEST);
+                }
+                String stringText = this.extractResponse(res);
+                extractedText.append(stringText);
             }
-            String stringText = this.extractResponse(res);
-            extractedText.append(stringText);
+            return extractedText.toString().trim();
+
+        } catch (IOException e) {
+            throw new CGException("OCR에 실패했습니다 " + e, HttpStatus.BAD_REQUEST);
         }
-        return extractedText.toString().trim();
     }
 
     private List<AnnotateImageRequest> makeRequestBuilder(ByteString imgBytes) {

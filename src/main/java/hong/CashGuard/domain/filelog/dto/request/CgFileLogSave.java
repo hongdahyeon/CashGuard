@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-04        work       최초 생성
+ * 2025-04-09        work       저장 생성자 추가
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,4 +27,15 @@ public class CgFileLogSave {
 
     @NotBlank
     private String fileUrl;
+
+    /**
+     * @method      CgFileLogSave 생성자
+     * @author      work
+     * @date        2025-04-09
+     * @deacription 파일 다운로드 시점에 사용되는 로그 저장용 DTO 생성자
+    **/
+    public CgFileLogSave(Long fileUid, String fileUrl) {
+        this.fileUid = fileUid;
+        this.fileUrl = fileUrl;
+    }
 }

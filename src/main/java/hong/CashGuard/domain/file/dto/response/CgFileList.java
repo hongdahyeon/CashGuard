@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
  * 2025-04-04        work       최초 생성
+ * 2025-04-09        work       {filePath} 필드 추가
  */
 
 @Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,6 +27,7 @@ public class CgFileList extends AuditMetaData {
     private String fileNm;
     private String fileType;
     private String fileSize;
+    private String filePath;
     private String extension;
     private String downloadCnt;
     private String saved;

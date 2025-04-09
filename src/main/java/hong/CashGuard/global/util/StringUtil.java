@@ -1,6 +1,7 @@
 package hong.CashGuard.global.util;
 
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * packageName    : hong.CashGuard.global.util
@@ -14,6 +15,7 @@ import java.util.Random;
  * 2025-03-27        work       최초 생성
  * 2025-04-01        work       {getOrDefault} 메소드 추가
  * 2025-04-07        work       {numberFormat} 메소드 추가 => 돈 단위로 출력
+ * 2025-04-09        work       {randomUUID} 메소드 추가
  */
 public class StringUtil {
 
@@ -58,5 +60,9 @@ public class StringUtil {
 
     public static String numberFormat(long amount) {
         return String.format("%,d", amount);
+    }
+
+    public static String randomUUID() {
+        return UUID.randomUUID().toString();
     }
 }

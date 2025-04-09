@@ -18,6 +18,7 @@ import java.util.List;
  * 2025-04-03        work       delete(T bean) 추가
  * 2025-04-04        work       <R> List<R> list(Long uid) 추가
  * 2025-04-04        work       <R> R getDetail(Long uid) 추가
+ * 2025-04-09        work       T view(T bean) 추가
  */
 public interface BaseMapper<T> {
 
@@ -40,6 +41,8 @@ public interface BaseMapper<T> {
     T view(Long uid);
 
     T view(String key);
+
+    T view(T bean);
 
     <R> R getDetail(Long uid);
 }

@@ -1,6 +1,5 @@
 package hong.CashGuard.domain.receipt.service;
 
-import hong.CashGuard.global.hong.google.GoogleVisionService;
 import hong.CashGuard.global.exception.CGException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +23,7 @@ import java.io.IOException;
  * -----------------------------------------------------------
  * 2025-04-07        work       최초 생성
  * 2025-04-08        work       Google Vision OCR API 서비스 로직 분리
+ * 2025-04-09        work       Google Vision OCR API 서비스 로직 분리 2
  */
 
 @RequiredArgsConstructor
@@ -31,14 +31,14 @@ import java.io.IOException;
 @RequestMapping("/cguard/api/receipt")
 public class CgReceiptRestController {
 
-    private final GoogleVisionService visionService;
+    private  final CgReceiptService service;
 
     @PostMapping("/upload")
     public ResponseEntity uploadReceiptImage(@RequestParam("file") MultipartFile file) throws IOException {
         if(file.isEmpty()) {
             throw new CGException("이미지가 비어있습니다.", HttpStatus.BAD_REQUEST);
         }
-        String extractText = visionService.extractText(file);
-        return ResponseEntity.ok(extractText);
+        service.uploadReceiptImage(file);
+        return ResponseEntity.ok().build();
     }
 }

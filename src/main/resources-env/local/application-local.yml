@@ -23,10 +23,12 @@ hong:
   base-url: 'http://localhost:8084'
   tus:
     file:
-      download: 'D:/cash_guard/tusFileUpload/uploads/'
+      download: 'D:/cash_guard/tus_file/'
       root: 'D:\cash_guard\tusFileUpload\'
       uri: '/api/tus/files/upload'
       expiration: 60000
+  receipt:
+    imagePath: 'D:/cash_guard/receipt_img/'
 
 jasypt:
   encryptor:
