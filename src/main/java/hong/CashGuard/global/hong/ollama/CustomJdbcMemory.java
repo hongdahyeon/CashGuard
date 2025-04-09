@@ -1,7 +1,7 @@
 package hong.CashGuard.global.hong.ollama;
 
-import hong.CashGuard.global.hong.ollama.domain.CgChatMemory;
-import hong.CashGuard.global.hong.ollama.domain.CustomJdbcMapper;
+import hong.CashGuard.domain.chat.domain.CgChatMemory;
+import hong.CashGuard.domain.chat.domain.CgChatMemoryMapper;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.stereotype.Component;
@@ -30,9 +30,9 @@ public class CustomJdbcMemory implements ChatMemory {
 
     private String sessionId;
     private String userId;
-    private final CustomJdbcMapper mapper;
+    private final CgChatMemoryMapper mapper;
 
-    public CustomJdbcMemory(CustomJdbcMapper mapper) {
+    public CustomJdbcMemory(CgChatMemoryMapper mapper) {
         this.mapper = mapper;
     }
 

@@ -1,7 +1,7 @@
 package hong.CashGuard.global.config;
 
 import hong.CashGuard.global.hong.ollama.CustomJdbcMemory;
-import hong.CashGuard.global.hong.ollama.domain.CustomJdbcMapper;
+import hong.CashGuard.domain.chat.domain.CgChatMemoryMapper;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.context.annotation.Bean;
@@ -44,7 +44,7 @@ public class OllamaConfig {
      *              => Spring AI가 문맥 저장소로 인식한다
     **/
     @Bean
-    public CustomJdbcMemory customJdbcMemory(CustomJdbcMapper mapper) {
+    public CustomJdbcMemory customJdbcMemory(CgChatMemoryMapper mapper) {
         return new CustomJdbcMemory(mapper);
     }
 }

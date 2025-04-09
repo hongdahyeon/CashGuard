@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="hong.CashGuard.global.hong.ollama.domain.CustomJdbcMapper">
+<mapper namespace="hong.CashGuard.domain.chat.domain.CgChatMemoryMapper">
 
     <select id="getIndex" resultType="int" parameterType="String">
-        /* customJdbc.getIndex */
+        /* cgChatMemory.getIndex */
         SELECT COALESCE(MAX(MESSAGE_INDEX), -1) + 1
           FROM CASH_GUARD.CG_CHAT_MEMORY
          WHERE SESSION_ID = #{sessionId}
     </select>
 
     <insert id="insertConversation" parameterType="CgChatMemory">
-        /* customJdbc.insertConversation */
+        /* cgChatMemory.insertConversation */
         INSERT INTO CASH_GUARD.CG_CHAT_MEMORY (
              SESSION_ID
             ,MESSAGE_INDEX
@@ -31,7 +31,7 @@
     </insert>
 
     <select id="getChatList" parameterType="map" resultType="CgChatMemory">
-        /* customJdbc.getChatList */
+        /* cgChatMemory.getChatList */
         SELECT ROLE
               ,CONTENT
           FROM CASH_GUARD.CG_CHAT_MEMORY
@@ -42,17 +42,32 @@
     </select>
 
     <update id="clearBySessionId" parameterType="String">
-        /* customJdbc.clearBySessionId */
+        /* cgChatMemory.clearBySessionId */
         UPDATE CASH_GUARD.CG_CHAT_MEMORY
            SET DELETE_AT = 'Y'
          WHERE SESSION_ID = #{sessionId}
     </update>
 
     <update id="clearByUserId" parameterType="String">
-        /* customJdbc.clearByUserId */
+        /* cgChatMemory.clearByUserId */
         UPDATE CASH_GUARD.CG_CHAT_MEMORY
            SET DELETE_AT = 'Y'
          WHERE USER_id = #{userId}
     </update>
 
+    <select id="getAllChatByUserId" parameterType="String" resultType="ChatList">
+        /* cgChatMemory.getAllChatByUserId */
+        SELECT SESSION_ID
+              ,MESSAGE_INDEX
+              ,ROLE
+              ,CONTENT
+              ,USER_ID
+              ,DELETE_AT
+              ,REG_DT
+          FROM CASH_GUARD.CG_CHAT_MEMORY
+         WHERE USER_ID = #{userId}
+           AND DELETE_AT = 'N'
+         ORDER BY SESSION_ID DESC, MESSAGE_INDEX DESC
+    </select>
+    
 </mapper>

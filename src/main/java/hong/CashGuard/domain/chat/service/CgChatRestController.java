@@ -1,10 +1,13 @@
 package hong.CashGuard.domain.chat.service;
 
 import hong.CashGuard.domain.chat.dto.request.ChatRequest;
+import hong.CashGuard.domain.chat.dto.response.ChatList;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * packageName    : hong.CashGuard.domain.chat.service
@@ -35,6 +38,12 @@ public class CgChatRestController {
     public ResponseEntity clear() {
         service.clearConversation();
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity findAllChatListByUserId() {
+        List<ChatList> chatList = service.findAllChatListByUserId();
+        return ResponseEntity.ok(chatList);
     }
 
 }

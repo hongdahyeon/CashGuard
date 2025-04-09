@@ -1,4 +1,4 @@
-package hong.CashGuard.global.hong.ollama.domain;
+package hong.CashGuard.domain.chat.domain;
 
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /**
- * packageName    : hong.CashGuard.global.hong.ollama.domain
+ * packageName    : hong.CashGuard.domain.chat.domain
  * fileName       : CgChatMemory
  * author         : work
  * date           : 2025-04-08

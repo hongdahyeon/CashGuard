@@ -1,13 +1,14 @@
-package hong.CashGuard.global.hong.ollama.domain;
+package hong.CashGuard.domain.chat.domain;
 
+import hong.CashGuard.domain.chat.dto.response.ChatList;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * packageName    : hong.CashGuard.global.hong.ollama.domain
- * fileName       : CustomJdbcMapper
+ * packageName    : hong.CashGuard.domain.chat.domain
+ * fileName       : CgChatMemoryMapper
  * author         : work
  * date           : 2025-04-08
  * description    : Ollama > jdbc mapper
@@ -17,7 +18,7 @@ import java.util.Map;
  * 2025-04-08        work       최초 생성
  */
 @Mapper
-public interface CustomJdbcMapper {
+public interface CgChatMemoryMapper {
 
     int getIndex(String sessionId);
 
@@ -28,4 +29,6 @@ public interface CustomJdbcMapper {
     int clearBySessionId(String sessionId);
 
     int clearByUserId(String userId);
+
+    List<ChatList> getAllChatByUserId(String userId);
 }
